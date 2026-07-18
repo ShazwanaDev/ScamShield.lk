@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark navy/charcoal — the app's single, deliberate theme (premium security-dashboard
+       aesthetic), not a light/dark toggle. */
+    --background: 222 47% 6%;
+    --foreground: 210 34% 96%;
+    --card: 222 40% 9%;
+    --card-foreground: 210 34% 96%;
+    --border: 217 26% 18%;
+    --muted: 217 26% 13%;
+    --muted-foreground: 215 16% 64%;
+    --ring: 43 96% 56%;
+
+    /* Gold/amber brand accent — CTAs, highlights, active states. */
+    --brand: 43 90% 55%;
+    --brand-2: 36 88% 47%;
+    --brand-accent: 45 97% 63%;
+    --brand-foreground: 222 47% 8%;
+
+    --success: 142 55% 45%;
+    --success-foreground: 222 47% 8%;
+    --warning: 32 92% 55%;
+    --warning-foreground: 222 47% 8%;
+    --danger: 0 76% 60%;
+    --danger-foreground: 0 0% 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .hover-lift {
+    @apply transition-transform transition-shadow duration-200 ease-out;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-elegant;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}

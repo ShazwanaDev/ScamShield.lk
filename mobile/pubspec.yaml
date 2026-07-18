@@ -1,0 +1,29 @@
+name: scamshield_lk
+description: ScamShield LK — Sinhala/Tamil Scam SMS Detector mobile app.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  shared_preferences: ^2.2.3
+  http: ^1.2.1
+  tflite_flutter: ^0.10.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  # The bundled offline TFLite model (assets/models/scamshield_offline.tflite) hasn't been
+  # exported yet (see ml/src, docs/tflite_export_notes.md) — OfflineModelService is a stub
+  # that doesn't load it. Re-add this assets block once the file actually exists on disk;
+  # declaring a path Flutter can't find breaks every build.
+  # assets:
+  #   - assets/models/scamshield_offline.tflite
