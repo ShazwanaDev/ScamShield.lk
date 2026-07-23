@@ -55,10 +55,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.elasticOut,
                 builder: (context, value, child) => Transform.scale(scale: value, child: child),
-                child: CircleAvatar(
+                child: const CircleAvatar(
                   radius: 32,
                   backgroundColor: AppColors.successBg,
-                  child: const Icon(Icons.check_rounded, color: AppColors.success, size: 34),
+                  child: Icon(Icons.check_rounded, color: AppColors.success, size: 34),
                 ),
               ),
               const SizedBox(height: 16),

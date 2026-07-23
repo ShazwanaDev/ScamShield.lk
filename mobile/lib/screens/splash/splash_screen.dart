@@ -79,64 +79,72 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ScaleTransition(
-              scale: _scale,
-              child: FadeTransition(
-                opacity: _opacity,
-                child: Container(
-                  height: 96,
-                  width: 96,
-                  decoration: BoxDecoration(
-                    color: AppColors.brand.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(26),
-                    border: Border.all(color: AppColors.brand.withValues(alpha: 0.3)),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.navy, AppColors.navyDeep],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ScaleTransition(
+                scale: _scale,
+                child: FadeTransition(
+                  opacity: _opacity,
+                  child: Container(
+                    height: 96,
+                    width: 96,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(26),
+                      border: Border.all(color: AppColors.tealLight.withValues(alpha: 0.3)),
+                    ),
+                    child: const Icon(Icons.shield_rounded, color: AppColors.tealLight, size: 48),
                   ),
-                  child: const Icon(Icons.shield_rounded, color: AppColors.brand, size: 48),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            FadeTransition(
-              opacity: _opacity,
-              child: RichText(
-                text: const TextSpan(
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.onSurface),
-                  children: [
-                    TextSpan(text: 'ScamShield '),
-                    TextSpan(text: 'LK', style: TextStyle(color: AppColors.brand)),
-                  ],
+              const SizedBox(height: 20),
+              FadeTransition(
+                opacity: _opacity,
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
+                    children: [
+                      TextSpan(text: 'ScamShield '),
+                      TextSpan(text: 'LK', style: TextStyle(color: AppColors.brandAccent)),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 6),
-            FadeTransition(
-              opacity: _opacity,
-              child: Text(
-                'Scam SMS detection for Sri Lanka',
-                style: TextStyle(color: AppColors.onSurfaceMuted.withValues(alpha: 0.9), fontSize: 13),
+              const SizedBox(height: 6),
+              FadeTransition(
+                opacity: _opacity,
+                child: Text(
+                  'Scam SMS detection for Sri Lanka',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13),
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              height: 16,
-              width: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.brand.withValues(alpha: 0.8)),
-            ),
-            const SizedBox(height: 14),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: Text(
-                _status,
-                key: ValueKey(_status),
-                style: const TextStyle(color: AppColors.onSurfaceMuted, fontSize: 12.5),
+              const SizedBox(height: 40),
+              const SizedBox(
+                height: 16,
+                width: 16,
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.tealLight),
               ),
-            ),
-          ],
+              const SizedBox(height: 14),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: Text(
+                  _status,
+                  key: ValueKey(_status),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12.5),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
