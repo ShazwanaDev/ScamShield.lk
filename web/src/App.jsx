@@ -1,6 +1,7 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth.jsx";
-import { ToastProvider } from "./ui/index.js";
+import { ToastProvider, Spinner } from "./ui/index.js";
 
 import PublicLayout from "./layouts/PublicLayout.jsx";
 import AuthLayout from "./layouts/AuthLayout.jsx";
@@ -37,6 +38,28 @@ import {
   VerifyEmailPage,
   AccountCreatedPage,
 } from "./pages/auth/AuthFlowPages.jsx";
+
+// User portal
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import AppLayout from "./layouts/AppLayout.jsx";
+import AppDashboard from "./pages/app/AppDashboard.jsx";
+import AppCheck from "./pages/app/AppCheck.jsx";
+import AppHistory from "./pages/app/AppHistory.jsx";
+import AppHistoryDetail from "./pages/app/AppHistoryDetail.jsx";
+import AppReports from "./pages/app/AppReports.jsx";
+import AppReportNew from "./pages/app/AppReportNew.jsx";
+import AppReportDetail from "./pages/app/AppReportDetail.jsx";
+import AppAlerts from "./pages/app/AppAlerts.jsx";
+import AppAwareness from "./pages/app/AppAwareness.jsx";
+import AppNotifications from "./pages/app/AppNotifications.jsx";
+import AppProfile from "./pages/app/AppProfile.jsx";
+import AppSettings from "./pages/app/AppSettings.jsx";
+
+// Admin portal — code-split into a lazy chunk (keeps recharts out of the
+// public/user bundle; only loads when an admin visits /admin/*).
+import AdminRoute from "./components/AdminRoute.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
+const AdminApp = lazy(() => import("./pages/admin/AdminApp.jsx"));
 
 export default function App() {
   return (
@@ -82,6 +105,45 @@ export default function App() {
               <Route path="/verify-email" element={<VerifyEmailPage />} />
               <Route path="/account-created" element={<AccountCreatedPage />} />
             </Route>
+
+            {/* User portal (auth-gated) */}
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/app" element={<AppDashboard />} />
+              <Route path="/app/check" element={<AppCheck />} />
+              <Route path="/app/history" element={<AppHistory />} />
+              <Route path="/app/history/:id" element={<AppHistoryDetail />} />
+              <Route path="/app/reports" element={<AppReports />} />
+              <Route path="/app/reports/new" element={<AppReportNew />} />
+              <Route path="/app/reports/:id" element={<AppReportDetail />} />
+              <Route path="/app/alerts" element={<AppAlerts />} />
+              <Route path="/app/alerts/:id" element={<AlertDetailPage />} />
+              <Route path="/app/awareness" element={<AppAwareness />} />
+              <Route path="/app/awareness/:slug" element={<ArticleDetailPage />} />
+              <Route path="/app/notifications" element={<AppNotifications />} />
+              <Route path="/app/profile" element={<AppProfile />} />
+              <Route path="/app/settings" element={<AppSettings />} />
+            </Route>
+
+            {/* Admin login (standalone, full-screen, ungated) */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Admin portal (admin-gated, lazy) */}
+            <Route
+              path="/admin/*"
+              element={
+                <AdminRoute>
+                  <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><Spinner /></div>}>
+                    <AdminApp />
+                  </Suspense>
+                </AdminRoute>
+              }
+            />
           </Routes>
         </ToastProvider>
       </AuthProvider>

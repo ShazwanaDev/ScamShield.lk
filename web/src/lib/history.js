@@ -53,3 +53,7 @@ export function markHistoryFeedback(email, id, correct) {
     read(email).map((e) => (e.id === id ? { ...e, feedback: correct ? "correct" : "incorrect" } : e))
   );
 }
+
+export function clearHistory(email) {
+  if (email) localStorage.removeItem(keyFor(email));
+}
