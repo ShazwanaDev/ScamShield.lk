@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class AppTextArea extends StatelessWidget {
   final TextEditingController controller;
@@ -23,6 +24,7 @@ class AppTextArea extends StatelessWidget {
       minLines: minLines,
       maxLines: minLines + 4,
       maxLength: maxLength,
+      style: AppFonts.message(fontSize: 14.5),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

@@ -1,46 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/classification_provider.dart';
-
-class HistoryEntry {
-  final String message;
-  final String label;
-  final double confidence;
-  final List<Map<String, dynamic>> triggerWords;
-  final bool isOffline;
-  final DateTime timestamp;
-
-  HistoryEntry({
-    required this.message,
-    required this.label,
-    required this.confidence,
-    required this.triggerWords,
-    required this.isOffline,
-    required this.timestamp,
-  });
-
-  factory HistoryEntry.fromJson(Map<String, dynamic> json) {
-    return HistoryEntry(
-      message: json['message'] as String,
-      label: json['label'] as String,
-      confidence: (json['confidence'] as num).toDouble(),
-      triggerWords: json['trigger_words'] != null
-          ? List<Map<String, dynamic>>.from(json['trigger_words'])
-          : const [],
-      isOffline: json['is_offline'] as bool? ?? false,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'message': message,
-        'label': label,
-        'confidence': confidence,
-        'trigger_words': triggerWords,
-        'is_offline': isOffline,
-        'timestamp': timestamp.toIso8601String(),
-      };
-}
+import '../models/classification_result.dart';
+import '../models/history_entry.dart';
 
 class HistoryService {
   static const _key = 'scamshield_history';
@@ -49,15 +10,7 @@ class HistoryService {
     final prefs = await SharedPreferences.getInstance();
     final existing = prefs.getStringList(_key) ?? [];
 
-    final entry = HistoryEntry(
-      message: message,
-      label: result.label,
-      confidence: result.confidence,
-      triggerWords: result.triggerWords,
-      isOffline: result.isOffline,
-      timestamp: DateTime.now(),
-    );
-
+    final entry = HistoryEntry.fromResult(message, result);
     existing.insert(0, jsonEncode(entry.toJson()));
     await prefs.setStringList(_key, existing);
   }
@@ -70,11 +23,23 @@ class HistoryService {
         .toList();
   }
 
-  static Future<void> deleteAt(int index) async {
+  static Future<void> setFeedback(String id, String feedback) async {
     final prefs = await SharedPreferences.getInstance();
     final existing = prefs.getStringList(_key) ?? [];
-    if (index < 0 || index >= existing.length) return;
-    existing.removeAt(index);
+    final updated = existing.map((raw) {
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      if (json['id'] == id) {
+        json['user_feedback'] = feedback;
+      }
+      return jsonEncode(json);
+    }).toList();
+    await prefs.setStringList(_key, updated);
+  }
+
+  static Future<void> deleteById(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = prefs.getStringList(_key) ?? [];
+    existing.removeWhere((raw) => (jsonDecode(raw) as Map<String, dynamic>)['id'] == id);
     await prefs.setStringList(_key, existing);
   }
 

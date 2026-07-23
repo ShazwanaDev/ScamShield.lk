@@ -1,0 +1,48 @@
+/** In-app notifications for the user portal. */
+export const NOTIFICATIONS = [
+  {
+    id: "n1",
+    type: "alert",
+    title: "New high-severity alert in your area",
+    body: "Fake 'Dialog anniversary draw' reload scam is spreading nationwide.",
+    time: "2026-07-21T09:12:00",
+    read: false,
+    to: "/app/alerts/AL-2041",
+  },
+  {
+    id: "n2",
+    type: "report",
+    title: "Your report was approved",
+    body: "Report SR-5820 was reviewed and added to community stats. Thank you!",
+    time: "2026-07-20T16:40:00",
+    read: false,
+    to: "/app/reports",
+  },
+  {
+    id: "n3",
+    type: "feedback",
+    title: "Thanks for your feedback",
+    body: "Your correction on a classification helps improve detection.",
+    time: "2026-07-19T11:05:00",
+    read: true,
+    to: "/app/history",
+  },
+  {
+    id: "n4",
+    type: "awareness",
+    title: "New awareness article",
+    body: "Read: 'How to spot a scam SMS in 10 seconds'.",
+    time: "2026-07-18T08:00:00",
+    read: true,
+    to: "/app/awareness/spot-a-scam-sms-in-10-seconds",
+  },
+  {
+    id: "n5",
+    type: "system",
+    title: "Offline model updated",
+    body: "Your on-device check model was refreshed for better accuracy.",
+    time: "2026-07-16T19:22:00",
+    read: true,
+    to: "/app/settings",
+  },
+];

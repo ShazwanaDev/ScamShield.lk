@@ -24,10 +24,10 @@ class EmptyState extends StatelessWidget {
           CircleAvatar(
             radius: 26,
             backgroundColor: AppColors.surfaceMuted,
-            child: Icon(icon, color: Colors.black45, size: 26),
+            child: Icon(icon, color: AppColors.onSurfaceMuted, size: 26),
           ),
           const SizedBox(height: 14),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.onSurface)),
           if (description != null) ...[
             const SizedBox(height: 6),
             Padding(
@@ -35,7 +35,7 @@ class EmptyState extends StatelessWidget {
               child: Text(
                 description!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.black54, fontSize: 13),
+                style: const TextStyle(color: AppColors.onSurfaceMuted, fontSize: 13),
               ),
             ),
           ],

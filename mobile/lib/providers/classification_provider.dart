@@ -1,22 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/classification_result.dart';
 import '../services/api_service.dart';
 import '../services/history_service.dart';
-
-class ClassificationResult {
-  final String label;
-  final double confidence;
-  final List<Map<String, dynamic>> triggerWords;
-  final bool isOffline;
-  final int? classificationId;
-
-  ClassificationResult({
-    required this.label,
-    required this.confidence,
-    required this.triggerWords,
-    this.isOffline = false,
-    this.classificationId,
-  });
-}
 
 class ClassificationNotifier extends StateNotifier<AsyncValue<ClassificationResult?>> {
   ClassificationNotifier() : super(const AsyncValue.data(null));

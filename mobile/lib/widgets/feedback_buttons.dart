@@ -44,7 +44,7 @@ class _FeedbackButtonsState extends State<FeedbackButtons> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Was this correct?', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text('Was this correct?', style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.onSurface)),
         const SizedBox(height: 8),
         Row(
           children: [

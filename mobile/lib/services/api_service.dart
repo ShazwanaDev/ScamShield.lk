@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import '../providers/classification_provider.dart';
+import '../models/classification_result.dart';
 import 'offline_model_service.dart';
 
 class ApiService {

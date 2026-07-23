@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import '../providers/classification_provider.dart';
+import '../models/classification_result.dart';
 import '../theme/app_theme.dart';
 import 'feedback_buttons.dart';
-import 'trigger_chip.dart';
+import 'highlighted_message.dart';
+import 'scam_badge.dart';
 
 class ResultCard extends StatelessWidget {
+  final String message;
   final ClassificationResult result;
   final Future<void> Function(bool correct)? onFeedback;
 
-  const ResultCard({super.key, required this.result, this.onFeedback});
+  const ResultCard({super.key, required this.message, required this.result, this.onFeedback});
 
   @override
   Widget build(BuildContext context) {
-    final isScam = result.label == 'scam';
+    final isScam = result.isScam;
     final tone = isScam ? AppColors.danger : AppColors.success;
     final bg = isScam ? AppColors.dangerBg : AppColors.successBg;
-    final pct = (result.confidence * 100).toStringAsFixed(1);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -27,33 +28,14 @@ class ResultCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: tone.withValues(alpha: 0.15),
-                child: Icon(isScam ? Icons.warning_amber_rounded : Icons.check_circle_outline, color: tone),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isScam ? 'Likely SCAM' : 'Looks legitimate',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: tone),
-                  ),
-                  Text('Confidence: $pct%', style: const TextStyle(color: Colors.black54, fontSize: 13)),
-                ],
-              ),
-            ],
-          ),
+          ScamBadge(isScam: isScam, confidence: result.confidence, large: true),
           if (result.isOffline) ...[
             const SizedBox(height: 10),
-            Row(
+            const Row(
               children: [
                 Icon(Icons.wifi_off_rounded, size: 14, color: AppColors.warning),
-                const SizedBox(width: 6),
-                const Expanded(
+                SizedBox(width: 6),
+                Expanded(
                   child: Text(
                     'Offline mode — basic on-device check, less reliable than the full model.',
                     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.warning),
@@ -62,21 +44,26 @@ class ResultCard extends StatelessWidget {
               ],
             ),
           ],
-          if (result.triggerWords.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            const Text(
-              'WORDS THAT DROVE THIS RESULT',
-              style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: Colors.black54),
+          const SizedBox(height: 14),
+          const Text(
+            'ORIGINAL MESSAGE',
+            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: AppColors.onSurfaceMuted),
+          ),
+          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.outline),
             ),
-            const SizedBox(height: 6),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: result.triggerWords
-                  .map((w) => TriggerChip(word: w['word'].toString(), negative: isScam))
-                  .toList(),
+            child: HighlightedMessage(
+              message: message,
+              triggerWords: result.triggerWordStrings,
+              negative: isScam,
             ),
-          ],
+          ),
           if (onFeedback != null && result.classificationId != null) ...[
             const SizedBox(height: 14),
             const Divider(),

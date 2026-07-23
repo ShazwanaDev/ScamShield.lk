@@ -10,7 +10,7 @@ class TriggerChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = negative ? AppColors.dangerBg : AppColors.surfaceMuted;
-    final fg = negative ? AppColors.danger : Colors.black87;
+    final fg = negative ? AppColors.danger : AppColors.onSurface;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(

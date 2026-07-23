@@ -4,29 +4,8 @@
 
 @layer base {
   :root {
-    /* Dark navy/charcoal — the app's single, deliberate theme (premium security-dashboard
-       aesthetic), not a light/dark toggle. */
-    --background: 222 47% 6%;
-    --foreground: 210 34% 96%;
-    --card: 222 40% 9%;
-    --card-foreground: 210 34% 96%;
-    --border: 217 26% 18%;
-    --muted: 217 26% 13%;
-    --muted-foreground: 215 16% 64%;
-    --ring: 43 96% 56%;
-
-    /* Gold/amber brand accent — CTAs, highlights, active states. */
-    --brand: 43 90% 55%;
-    --brand-2: 36 88% 47%;
-    --brand-accent: 45 97% 63%;
-    --brand-foreground: 222 47% 8%;
-
-    --success: 142 55% 45%;
-    --success-foreground: 222 47% 8%;
-    --warning: 32 92% 55%;
-    --warning-foreground: 222 47% 8%;
-    --danger: 0 76% 60%;
-    --danger-foreground: 0 0% 100%;
+    color-scheme: light;
+    --ring: 132 202 255; /* #84CAFF */
   }
 
   * {
@@ -34,16 +13,42 @@
   }
 
   html {
-    color-scheme: dark;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Sinhala & Tamil content is tagged with lang= so the right script font wins
+     and glyphs are never clipped. */
+  :lang(si) {
+    font-family: "Noto Sans Sinhala", "Inter", sans-serif;
+    line-height: 1.7;
+  }
+  :lang(ta) {
+    font-family: "Noto Sans Tamil", "Inter", sans-serif;
+    line-height: 1.7;
+  }
+
+  /* Headings inherit their colour so they stay legible inside dark sections
+     (hero, footer, app promo). Pages set colour explicitly where needed. */
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+    text-wrap: balance;
   }
 
   :focus-visible {
-    outline: 2px solid hsl(var(--ring));
+    outline: 2px solid rgb(var(--ring));
     outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: #d1e9ff;
+    color: #0b1f33;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -58,15 +63,64 @@
   }
 }
 
+@layer components {
+  /* Skip link for keyboard users */
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white shadow-lg;
+  }
+}
+
 @layer utilities {
   .hover-lift {
-    @apply transition-transform transition-shadow duration-200 ease-out;
+    @apply transition duration-200 ease-out;
   }
   .hover-lift:hover {
-    @apply -translate-y-0.5 shadow-elegant;
+    @apply -translate-y-0.5 shadow-card-hover;
   }
 
   .text-balance {
     text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Skeleton shimmer surface */
+  .skeleton {
+    @apply rounded-md bg-muted;
+    background-image: linear-gradient(
+      90deg,
+      rgba(234, 239, 245, 0) 0,
+      rgba(255, 255, 255, 0.65) 50%,
+      rgba(234, 239, 245, 0) 100%
+    );
+    background-size: 400px 100%;
+    background-repeat: no-repeat;
+    @apply animate-shimmer;
+  }
+
+  /* Thin scrollbars for scroll regions (tables, sidebars) */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 999px;
+  }
+
+  /* Grid backdrop used behind hero / dark sections */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
   }
 }

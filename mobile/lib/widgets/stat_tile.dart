@@ -21,12 +21,12 @@ class StatTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 12.5, color: Colors.black54, fontWeight: FontWeight.w600)),
+                  Text(label, style: const TextStyle(fontSize: 12.5, color: AppColors.onSurfaceMuted, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
-                  Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
+                  Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: AppColors.onSurface)),
                   if (hint != null) ...[
                     const SizedBox(height: 2),
-                    Text(hint!, style: const TextStyle(fontSize: 11, color: Colors.black38)),
+                    Text(hint!, style: const TextStyle(fontSize: 11, color: AppColors.onSurfaceMuted)),
                   ],
                 ],
               ),
