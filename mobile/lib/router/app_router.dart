@@ -3,14 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
+import '../screens/alerts/alert_detail_screen.dart';
+import '../screens/alerts/alerts_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/awareness/article_detail_screen.dart';
+import '../screens/awareness/awareness_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/history/history_detail_screen.dart';
 import '../screens/history/history_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/notifications/notifications_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/quiz/quiz_screen.dart';
 import '../screens/report/report_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/shell/app_shell.dart';
@@ -62,6 +68,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
       GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
       GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
+      GoRoute(path: '/alerts', builder: (context, state) => const AlertsScreen()),
+      GoRoute(
+        path: '/alerts/:id',
+        builder: (context, state) => AlertDetailScreen(alertId: state.pathParameters['id']!),
+      ),
+      GoRoute(path: '/awareness', builder: (context, state) => const AwarenessScreen()),
+      GoRoute(
+        path: '/awareness/:slug',
+        builder: (context, state) => ArticleDetailScreen(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(path: '/quiz', builder: (context, state) => const QuizScreen()),
       GoRoute(
         path: '/history/:id',
         builder: (context, state) => HistoryDetailScreen(entryId: state.pathParameters['id']!),
