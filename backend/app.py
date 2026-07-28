@@ -7,10 +7,13 @@ Run with:
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from models.db import db
 from routes.classify import classify_bp
 from routes.community import community_bp
+
+migrate = Migrate()
 
 
 def create_app():
@@ -24,6 +27,7 @@ def create_app():
     app.config["REDIS_URL"] = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     app.register_blueprint(classify_bp, url_prefix="/api")
     app.register_blueprint(community_bp, url_prefix="/api")
@@ -31,9 +35,6 @@ def create_app():
     @app.get("/health")
     def health():
         return jsonify({"status": "ok"})
-
-    with app.app_context():
-        db.create_all()
 
     return app
 

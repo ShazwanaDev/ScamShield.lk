@@ -7,7 +7,7 @@ import joblib
 import numpy as np
 from flask import Blueprint, request, jsonify
 
-from models.db import db, ClassifiedMessage
+from models.db import db, ClassifiedMessage, ModelVersion
 
 classify_bp = Blueprint("classify", __name__)
 
@@ -52,12 +52,14 @@ def predict():
     confidence = float(proba[class_idx])
 
     triggers = _top_features(X, vectorizer, model)
+    active_version = ModelVersion.query.filter_by(is_active=True).first()
 
     record = ClassifiedMessage(
         message_text=message,
         message_length=len(message),
         predicted_label=pred_label,
         confidence_score=confidence,
+        model_version_id=active_version.id if active_version else None,
     )
     db.session.add(record)
     db.session.commit()
