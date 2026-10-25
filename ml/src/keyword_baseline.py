@@ -3,15 +3,22 @@ keyword_baseline.py
 Simple rule-based keyword blocklist classifier — the baseline the ML models
 must beat to justify the ML approach, per the research question.
 
+It only answers "scam or not", so it is scored on the scam vs not-scam task,
+on the same real and synthetic test sets as the ML models.
+
 Usage:
     python src/keyword_baseline.py
 """
-import os
 import json
-import pandas as pd
-from sklearn.metrics import precision_recall_fscore_support, roc_auc_score, accuracy_score
+import os
+import re
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+import pandas as pd
+
+from metrics import bootstrap_ci, scam_metrics
+from preprocessing import DATASET_PATH
+
+MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 
 # Seed keyword list — expand this as you review more real scam messages.
 # Keep Sinhala/Tamil script entries alongside Singlish/English ones.
@@ -22,48 +29,46 @@ SCAM_KEYWORDS = [
     "account blocked", "reward", "free gift", "confirm your", "limited time",
 ]
 
+_ASCII = re.compile(r"^[\x00-\x7f]+$")
+# Latin keywords match whole words only ("won" must not fire on "won't" or
+# "wonderful"). Sinhala/Tamil keywords use plain substring matching, because
+# \b is unreliable around Sinhala/Tamil vowel signs.
+_PATTERNS = [
+    re.compile(r"\b" + re.escape(kw) + r"\b", re.IGNORECASE) if _ASCII.match(kw) else re.compile(re.escape(kw))
+    for kw in SCAM_KEYWORDS
+]
+
 
 def keyword_score(message: str) -> int:
-    text = str(message).lower()
-    return sum(1 for kw in SCAM_KEYWORDS if kw.lower() in text)
+    text = str(message)
+    return sum(1 for p in _PATTERNS if p.search(text))
 
 
 def predict(message: str) -> str:
-    return "scam" if keyword_score(message) >= 1 else "legitimate"
+    return "scam" if keyword_score(message) >= 1 else "not_scam"
+
+
+def score_split(df: pd.DataFrame) -> dict:
+    scores = df["clean_message"].map(keyword_score)
+    y_true = df["label"].eq("scam")
+    y_pred = scores >= 1
+    result = scam_metrics(y_true, y_pred, y_score=scores)
+    result["ci95"] = bootstrap_ci(y_true, y_pred, scores)
+    return result
 
 
 def main():
-    test = pd.read_csv(os.path.join(DATA_DIR, "test.csv"))
-    test["predicted"] = test["clean_message"].apply(predict)
-    test["score"] = test["clean_message"].apply(keyword_score)
-
-    y_true = test["label"]
-    y_pred = test["predicted"]
-    # crude confidence proxy for AUC — presence of any keyword hit
-    y_score = (test["score"] > 0).astype(int)
-    y_true_bin = (y_true == "scam").astype(int)
-
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        y_true, y_pred, average="binary", pos_label="scam", zero_division=0
-    )
-    acc = accuracy_score(y_true, y_pred)
-    try:
-        auc = roc_auc_score(y_true_bin, y_score)
-    except ValueError:
-        auc = float("nan")
-
+    df = pd.read_csv(DATASET_PATH)
     results = {
         "model": "keyword_baseline",
-        "accuracy": acc,
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
-        "auc_roc": auc,
-        "n_test": len(test),
+        "task": "scam_vs_not_scam",
+        "real_eval": score_split(df[df["split"] == "real_eval"]),
+        "synth_test": score_split(df[df["split"] == "synth_test"]),
     }
     print(json.dumps(results, indent=2))
 
-    out_path = os.path.join(os.path.dirname(__file__), "..", "models", "keyword_baseline_results.json")
+    os.makedirs(MODELS_DIR, exist_ok=True)
+    out_path = os.path.join(MODELS_DIR, "keyword_baseline_results.json")
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"Saved results to {out_path}")

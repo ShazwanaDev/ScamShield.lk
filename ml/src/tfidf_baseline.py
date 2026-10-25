@@ -1,84 +1,116 @@
 """
 tfidf_baseline.py
-Primary model: TF-IDF (unigram+bigram) with Logistic Regression and SVM,
-5-fold cross-validation, saved as pickles for the Flask backend and as
-a quantization-ready artifact for TFLite conversion.
+Primary models: TF-IDF (word unigram+bigram) with Logistic Regression and a
+calibrated LinearSVC, trained 3-way (legitimate / scam / spam) on the
+synthetic training split only. Real messages are never seen here, because
+they are the held-out real-world test set used by evaluate.py.
+
+Cross-validation is grouped by template (StratifiedGroupKFold), so augmented
+variants of one template never sit on both sides of a fold.
 
 Usage:
     python src/tfidf_baseline.py
 """
-import os
+import hashlib
 import json
+import os
+from datetime import datetime, timezone
+
 import joblib
 import pandas as pd
+import sklearn
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn.calibration import CalibratedClassifierCV
-from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report
+from sklearn.model_selection import StratifiedGroupKFold, cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import LinearSVC
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+from preprocessing import DATASET_PATH, SEED
+from text_cleaning import TOKEN_PATTERN
+
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
-os.makedirs(MODELS_DIR, exist_ok=True)
+TRAIN_SPLITS = ("synth_train",)
+
+
+def build_vectorizer() -> TfidfVectorizer:
+    return TfidfVectorizer(
+        ngram_range=(1, 2),
+        min_df=2,              # ignore one-off tokens (mostly injected typos)
+        sublinear_tf=True,
+        analyzer="word",
+        token_pattern=TOKEN_PATTERN,  # keeps Sinhala/Tamil words whole
+    )
+
+
+def build_models() -> dict:
+    return {
+        "logreg": LogisticRegression(max_iter=2000, class_weight="balanced"),
+        # LinearSVC has no predict_proba; calibration gives the confidence
+        # score shown in the app and the probabilities needed for AUC-ROC.
+        "svm": CalibratedClassifierCV(LinearSVC(class_weight="balanced"), cv=5),
+    }
+
+
+def file_sha256(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def main():
-    train = pd.read_csv(os.path.join(DATA_DIR, "train.csv"))
-    val = pd.read_csv(os.path.join(DATA_DIR, "val.csv"))
+    df = pd.read_csv(DATASET_PATH)
+    train = df[df["split"].isin(TRAIN_SPLITS)]
+    val = df[df["split"] == "synth_val"]
+    if train["source_type"].ne("synthetic_augmentation").any():
+        raise AssertionError("Primary models must train on synthetic rows only; real rows are the test set")
 
     X_train_text = train["clean_message"].astype(str)
     y_train = train["label"]
-    X_val_text = val["clean_message"].astype(str)
-    y_val = val["label"]
+    groups = train["group_id"]
 
-    vectorizer = TfidfVectorizer(
-        ngram_range=(1, 2),
-        min_df=1,
-        sublinear_tf=True,
-        analyzer="word",
-        token_pattern=r"(?u)\b\w+\b",  # keeps Sinhala/Tamil unicode word chars
-    )
+    os.makedirs(MODELS_DIR, exist_ok=True)
+    cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=SEED)
+    vectorizer = build_vectorizer()
     X_train = vectorizer.fit_transform(X_train_text)
-    X_val = vectorizer.transform(X_val_text)
+    X_val = vectorizer.transform(val["clean_message"].astype(str))
 
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_summary = {}
+    for name, model in build_models().items():
+        # Fresh vectorizer per fold so IDF weights don't see the held-out fold.
+        scores = cross_val_score(
+            make_pipeline(build_vectorizer(), model),
+            X_train_text, y_train, groups=groups, cv=cv, scoring="f1_macro",
+        )
+        model.fit(X_train, y_train)
+        joblib.dump(model, os.path.join(MODELS_DIR, f"{name}_model.pkl"))
+        cv_summary[f"{name}_cv_f1_macro_mean"] = float(scores.mean())
+        cv_summary[f"{name}_cv_f1_macro_std"] = float(scores.std())
 
-    # Logistic Regression
-    logreg = LogisticRegression(max_iter=1000, class_weight="balanced")
-    logreg_cv_scores = cross_val_score(logreg, X_train, y_train, cv=skf, scoring="f1_macro")
-    logreg.fit(X_train, y_train)
-
-    # SVM — wrap LinearSVC with a calibrated classifier so we get predict_proba
-    # for AUC-ROC and for the confidence score shown in the app.
-    svm_base = LinearSVC(class_weight="balanced", max_iter=5000)
-    svm = CalibratedClassifierCV(svm_base, cv=skf)
-    svm_cv_scores = cross_val_score(svm, X_train, y_train, cv=skf, scoring="f1_macro")
-    svm.fit(X_train, y_train)
-
-    print("=== Logistic Regression (5-fold CV, macro-F1) ===")
-    print(f"  mean: {logreg_cv_scores.mean():.4f}  std: {logreg_cv_scores.std():.4f}")
-    print(classification_report(y_val, logreg.predict(X_val)))
-
-    print("=== SVM / LinearSVC (5-fold CV, macro-F1) ===")
-    print(f"  mean: {svm_cv_scores.mean():.4f}  std: {svm_cv_scores.std():.4f}")
-    print(classification_report(y_val, svm.predict(X_val)))
+        print(f"=== {name} (grouped 5-fold CV on synthetic train, macro-F1) ===")
+        print(f"  mean: {scores.mean():.4f}  std: {scores.std():.4f}")
+        print(classification_report(val["label"], model.predict(X_val), digits=3))
 
     joblib.dump(vectorizer, os.path.join(MODELS_DIR, "tfidf_vectorizer.pkl"))
-    joblib.dump(logreg, os.path.join(MODELS_DIR, "logreg_model.pkl"))
-    joblib.dump(svm, os.path.join(MODELS_DIR, "svm_model.pkl"))
 
-    cv_summary = {
-        "logreg_cv_f1_macro_mean": logreg_cv_scores.mean(),
-        "logreg_cv_f1_macro_std": logreg_cv_scores.std(),
-        "svm_cv_f1_macro_mean": svm_cv_scores.mean(),
-        "svm_cv_f1_macro_std": svm_cv_scores.std(),
+    manifest = {
+        "trained_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "labels": sorted(y_train.unique()),
+        "train_splits": list(TRAIN_SPLITS),
+        "n_train": int(len(train)),
+        "n_features": int(len(vectorizer.vocabulary_)),
+        "dataset_sha256": file_sha256(DATASET_PATH),
+        "scikit_learn_version": sklearn.__version__,
+        **cv_summary,
     }
     with open(os.path.join(MODELS_DIR, "cv_summary.json"), "w") as f:
-        json.dump(cv_summary, f, indent=2)
+        json.dump(manifest, f, indent=2)
 
     print(f"\nSaved vectorizer + models to {MODELS_DIR}")
-    print("Next: run evaluate.py against test.csv for final held-out metrics.")
+    print("Next: run evaluate.py for held-out real-message and synthetic test results.")
 
 
 if __name__ == "__main__":
