@@ -40,7 +40,8 @@ scamshield-lk/
 ## 3. Setup — do this top to bottom
 
 ### 3.1 Prerequisites
-- Python 3.11
+- Python 3.11 or 3.12 (the pinned packages in `requirements.txt` have no builds for 3.13+;
+  on Windows, `py -3.12 -m venv venv` picks the right version)
 - Node 18+ (for the React web app)
 - Flutter 3.x SDK (for the mobile app)
 - Docker Desktop (for Postgres + Redis locally)
@@ -60,13 +61,20 @@ pip install -r requirements.txt
 ```
 
 ### 3.4 Run the ML pipeline (in order)
+First copy the private real dataset into place. It's gitignored and must never be committed:
 ```bash
-python src/preprocessing.py          # cleans + normalizes raw CSVs in ml/data/
-python src/keyword_baseline.py       # rule-based baseline for comparison
-python src/tfidf_baseline.py         # TF-IDF + LogReg + SVM, trains + saves to ml/models/
-python src/explainability_lime.py    # generates LIME explanations for sample predictions
-python src/evaluate.py               # precision/recall/F1/AUC-ROC report + confusion matrix
+cp /path/to/private/ScamShield_Verified_Real_Dataset_FINAL.xlsx data/raw/
 ```
+Then run, from `ml/`:
+```bash
+python src/preprocessing.py          # merges real + synthetic, cleans, dedups, splits; writes data/processed/dataset.csv
+python src/keyword_baseline.py       # rule-based baseline, scored on the same test sets
+python src/tfidf_baseline.py         # 3-way TF-IDF + LogReg/SVM trained on synthetic only; saves ml/models/*.pkl
+python src/explainability_lime.py    # LIME + TF-IDF explanations for real scam examples (private output)
+python src/evaluate.py               # real-message test (A), synthetic+real CV (B), synthetic 3-way (C)
+```
+`ml/data/DATASET_README.md` documents the data sources, how the synthetic data was generated, the
+evaluation protocol and the latest results.
 mBERT fine-tuning is meant to run on Google Colab GPU (CPU fine-tuning of mBERT
 is impractically slow) — see `ml/src/mbert_colab_notebook_notes.md`.
 
@@ -112,24 +120,21 @@ Bottom tabs: Check · Report · History · Stats. Falls back to a basic on-devic
 check (`OfflineModelService`, not the real TFLite model yet) when the API is unreachable —
 see §6 open issues.
 
-## 4. Dataset status (as of this build)
+## 4. Dataset status (as of 25 Oct 2026)
 
-| Source | Status | Count | Use |
+| Source | Location | Count | Use |
 |---|---|---|---|
-| Real verified screenshots (CashAvatar, Gamespro, police impersonation, bank scams) | Verified real | ~10 | Primary training data |
-| `Real_Reported_Scam_SMS_Examples.xlsx` | 3 rows verbatim, rest reconstructed | ~few dozen | Primary (verbatim rows only) + labelled reconstructions |
-| Supervisor `sms_phishing_dataset_lk.xlsx` (128,650 rows) | Synthetic fingerprints detected | 1,500-row dedup sample | Documented **augmentation only**, labeled SYNTHETIC |
-| `sri_lankan_sms_scam_dataset.xlsx` (2,000 rows) | Synthetic fingerprints detected | — | Not used as primary |
-| Reddit 333+ messages | Templated/illustrative | — | Rejected |
-| UCI SMS Spam Collection | Real, English only | 5,574 | Supplementary legitimate/English baseline class |
+| Real collected messages | `ml/data/raw/` (private, gitignored) | 115 verbatim + 12 reconstructed | **Test set only** for the primary models; also used in the synthetic+real CV experiment |
+| AI-assisted synthetic augmentation (supervisor-approved 8 Oct 2026) | `ml/data/synthetic/` | 3,000 (231 templates) | Training data, with a template-grouped synthetic test split |
 
-**Target: 500–1000 real labelled messages.** Current real count is small — this is
-the most urgent open task. See `docs/data_collection_todo.md`.
+Models are 3-way (legitimate / scam / spam). The headline real-world result is scam vs not-scam
+on the real messages, because those carry only scam/legitimate labels. See
+`ml/data/DATASET_README.md` for provenance, the generation procedure, the evaluation protocol,
+results and limitations.
 
-⚠️ Important integrity rule baked into this pipeline: any file used for training
-must be labeled `source_type` = `real` / `reconstructed` / `synthetic_augmentation`
-in the CSV. The training script will refuse to treat `synthetic_augmentation` rows
-as more than a clearly-flagged secondary component — never as primary evidence.
+⚠️ Integrity rule enforced by the pipeline: every row carries `source_type` = `real` /
+`reconstructed` / `synthetic_augmentation`. Synthetic rows are never reported as collected data,
+and the primary models never train on real messages.
 
 ## 5. Known issues to fix before interim report submission
 
@@ -143,7 +148,7 @@ as more than a clearly-flagged secondary component — never as primary evidence
 - [ ] Interim report (due end of July) — use `Interim_Report_Template.docx`
 - [ ] Grow real dataset toward 500–1000 messages
 - [ ] Fix the 3 known diagram issues above
-- [ ] Train + evaluate TF-IDF/LogReg/SVM baseline
+- [x] Train + evaluate TF-IDF/LogReg/SVM baseline (results in `ml/data/DATASET_README.md`, "Latest results")
 - [ ] Fine-tune mBERT on Colab, compare metrics
 - [ ] LIME explainability demo
 - [ ] Flutter + React + Flask integrated demo

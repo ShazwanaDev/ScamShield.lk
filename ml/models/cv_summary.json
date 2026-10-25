@@ -1,0 +1,19 @@
+{
+  "trained_at": "2026-10-25T17:41:07+00:00",
+  "labels": [
+    "legitimate",
+    "scam",
+    "spam"
+  ],
+  "train_splits": [
+    "synth_train"
+  ],
+  "n_train": 2031,
+  "n_features": 4388,
+  "dataset_sha256": "c18192e36ff2df5236b3c78cbf054be1d5c3ad21644d10209489b14cf32cc977",
+  "scikit_learn_version": "1.5.1",
+  "logreg_cv_f1_macro_mean": 0.6889698283918986,
+  "logreg_cv_f1_macro_std": 0.15124340690464042,
+  "svm_cv_f1_macro_mean": 0.7002978947234864,
+  "svm_cv_f1_macro_std": 0.13484281029164996
+}
