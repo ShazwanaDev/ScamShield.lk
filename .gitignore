@@ -11,8 +11,11 @@ ml/models/*.joblib
 ml/models/*.bin
 ml/models/*.safetensors
 ml/models/mbert_checkpoint/
-ml/data/raw/*.csv
+# Real collected messages are personal inbox content. Never commit them, or
+# anything derived from them that contains message text.
+ml/data/raw/*
 !ml/data/raw/.gitkeep
+ml/data/processed/
 
 # Env / secrets
 .env
