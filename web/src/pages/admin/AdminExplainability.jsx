@@ -14,12 +14,14 @@ export default function AdminExplainability() {
     <div className="space-y-6">
       <PageHeader
         title="Explainability review"
-        description="Inspect why the model flags a message — highlighted phrases and their contribution (LIME-style)."
+        description="Inspect why a message gets flagged: highlighted phrases and their contribution."
         icon={<Icons.IconWand className="h-5 w-5" />}
       />
 
-      <Alert tone="info" title="Word-level explanations">
-        Each prediction exposes the phrases driving it. This transparency is a core research contribution — predictions are never a black box.
+      <Alert tone="warning" title="Preview using the on-device checker">
+        These examples run through the browser's rule-based fallback checker, not the trained model, so the phrases and
+        weights below are its rules. The trained model's explanations come from the backend and from the LIME analysis in{" "}
+        <code>ml/src/explainability_lime.py</code>.
       </Alert>
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">

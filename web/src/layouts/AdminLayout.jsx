@@ -31,6 +31,13 @@ export default function AdminLayout() {
       <div className="lg:pl-64">
         <PortalTopbar onMenu={() => setMenuOpen(true)} variant="admin" searchPlaceholder="Search records, users…" />
         <main id="main" className="mx-auto max-w-[100rem] px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+          <p role="note" className="mb-5 flex items-start gap-2 rounded-md border border-spam/30 bg-spam/10 px-3 py-2 text-xs text-foreground">
+            <Badge tone="spam" size="sm" className="shrink-0">Demo data</Badge>
+            <span>
+              The admin backend isn't built yet, so most figures, users, reports and tickets here are sample data. The model
+              results on the Models and Evaluation pages, and the dataset counts, are real.
+            </span>
+          </p>
           <Outlet />
         </main>
       </div>

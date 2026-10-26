@@ -5,6 +5,7 @@ import ResultView from "../../components/analyzer/ResultView.jsx";
 import { SCAM_CATEGORIES } from "../../data/scamCategories.js";
 import { ALERTS, SEVERITY } from "../../data/alerts.js";
 import { ARTICLES } from "../../data/awareness.js";
+import RESULTS from "../../data/modelResults.json";
 import * as Icons from "../../components/icons.jsx";
 import { Button, Badge, Card, SectionHeading, VerdictBadge, cn } from "../../ui/index.js";
 
@@ -101,7 +102,7 @@ export default function LandingPage() {
       <section className="border-y border-border bg-surface">
         <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-border px-4 sm:px-6 md:grid-cols-4 lg:px-8">
           {[
-            { v: "18,000+", l: "Messages checked" },
+            { v: String(RESULTS.dataset.realTest), l: "Real SMS used for testing" },
             { v: "6", l: "Languages & scripts" },
             { v: "8", l: "Scam types tracked" },
             { v: "Free", l: "Always, no sign-up" },
@@ -263,8 +264,8 @@ export default function LandingPage() {
               </Badge>
               <h2 className="mt-4 text-3xl font-extrabold">Check scams on the go, even offline</h2>
               <p className="mt-3 max-w-lg text-white/70">
-                The ScamShield LK Android app checks messages instantly — with an on-device model that keeps working
-                when you have no connection.
+                The ScamShield LK Android app checks messages instantly, with a simpler on-device check that keeps
+                working when you have no connection.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button variant="teal" leftIcon={<Icons.IconSmartphone className="h-5 w-5" />}>
