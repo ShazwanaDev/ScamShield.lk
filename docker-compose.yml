@@ -29,6 +29,8 @@ services:
       - "5000:5000"
     volumes:
       - ./ml/models:/app/../ml/models:ro
+      # predictions reuse the training-time text cleaning in ml/src/text_cleaning.py
+      - ./ml/src:/app/../ml/src:ro
 
 volumes:
   scamshield_pgdata:

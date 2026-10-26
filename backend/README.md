@@ -48,10 +48,28 @@ idempotent — safe to re-run on every deploy) before handing off to gunicorn.
 - `model_versions` — one `is_active=True` row, so `/api/predict` has a model version to
   stamp classifications with.
 
+## Prediction
+
+`/api/predict` loads `ml/models/tfidf_vectorizer.pkl` and `ml/models/logreg_model.pkl` on the
+first request. It cleans the message with `ml/src/text_cleaning.py`, the same code used to
+prepare the training data. That means the backend needs the repository's `ml/` folder beside
+it, and `docker-compose.yml` mounts both `ml/models` and `ml/src` into the container.
+
+The response gives one of three labels: `legitimate`, `scam` or `spam`. The `trigger_words` are
+the words in the message that pushed the decision towards or away from scam: a positive weight
+means more scam-like. Masked links and phone numbers are reported as `[link]` and
+`[phone number]`.
+
+Model files must be loaded with the scikit-learn version they were trained with. Both
+`requirements.txt` files pin 1.5.1, so train on Python 3.11 or 3.12 with those pins.
+
 ## Known limitations
 
-- `ml/models/*.pkl` (the trained vectorizer + classifier) aren't in this repo — `/api/predict`
-  will 500 until they're trained and placed there.
+- `ml/models/*.pkl` aren't in this repo. Until they have been trained (see `ml/`),
+  `/api/predict` answers 503 with a JSON error, and the web client falls back to its on-device
+  checker.
+- The mobile app still treats any label other than `scam` as legitimate, so it shows spam
+  results as legitimate.
 - `ScamReport.predicted_label` / `confirmed_label` exist in the schema (per the ERD) but
   nothing currently writes to them — the report submission API doesn't accept a predicted
   label, and the moderation endpoint doesn't set a confirmed one. Wiring that up is an API
