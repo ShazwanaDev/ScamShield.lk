@@ -88,8 +88,9 @@ export function fetchStats() {
   return request("/stats");
 }
 
-export function fetchModerationQueue() {
-  return request("/moderate");
+/** `status` is "pending" (the queue), "approved" or "rejected". */
+export function fetchModerationQueue(status = "pending") {
+  return request(`/moderate?status=${encodeURIComponent(status)}`);
 }
 
 export function moderateReport(reportId, decision) {

@@ -34,8 +34,9 @@ export default function AdminLayout() {
           <p role="note" className="mb-5 flex items-start gap-2 rounded-md border border-spam/30 bg-spam/10 px-3 py-2 text-xs text-foreground">
             <Badge tone="spam" size="sm" className="shrink-0">Demo data</Badge>
             <span>
-              The admin backend isn't built yet, so most figures, users, reports and tickets here are sample data. The model
-              results on the Models and Evaluation pages, and the dataset counts, are real.
+              Most of the admin backend isn't built yet, so the figures, users, tickets and Scam reports page here are sample
+              data. These parts are real: the moderation queue, the model results on the Models and Evaluation pages, and the
+              dataset counts.
             </span>
           </p>
           <Outlet />

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { MOD_REPORTS } from "../../data/admin.js";
+import { useCallback, useEffect, useState } from "react";
+import { API_BASE, ApiError, fetchModerationQueue, moderateReport } from "../../lib/api.js";
 import { CATEGORY_BY_SLUG } from "../../data/scamCategories.js";
 import {
   PageHeader,
@@ -10,46 +10,107 @@ import {
   Button,
   Modal,
   EmptyState,
+  ErrorState,
+  SkeletonText,
   useToast,
-  cn,
 } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
 
+const STATUSES = ["pending", "approved", "rejected"];
 const STATUS = {
   pending: { label: "Pending", tone: "spam" },
   approved: { label: "Approved", tone: "legit" },
   rejected: { label: "Rejected", tone: "scam" },
 };
-const LANG = { en: "English", si: "Sinhala", ta: "Tamil", mixed: "Singlish" };
+const EMPTY_TEXT = {
+  pending: "The queue is empty. New community reports will appear here.",
+  approved: "No reports have been approved yet.",
+  rejected: "No reports have been rejected yet.",
+};
+
+function langOf(text) {
+  if (/[඀-෿]/.test(text)) return "si";
+  if (/[஀-௿]/.test(text)) return "ta";
+  return undefined;
+}
+
+function when(iso) {
+  return iso ? new Date(iso).toLocaleString() : "—";
+}
+
+function categoryName(slug) {
+  if (!slug) return "Not given";
+  return CATEGORY_BY_SLUG[slug]?.name || slug;
+}
 
 export default function AdminModeration() {
   const { toast } = useToast();
-  const [rows, setRows] = useState(MOD_REPORTS);
+  const [lists, setLists] = useState({ pending: [], approved: [], rejected: [] });
+  const [state, setState] = useState("loading"); // loading | ready | error
+  const [error, setError] = useState(null);
   const [tab, setTab] = useState("pending");
   const [active, setActive] = useState(null);
+  const [busyId, setBusyId] = useState(null);
 
-  const counts = useMemo(
-    () => ({
-      pending: rows.filter((r) => r.status === "pending").length,
-      approved: rows.filter((r) => r.status === "approved").length,
-      rejected: rows.filter((r) => r.status === "rejected").length,
-    }),
-    [rows],
-  );
+  const load = useCallback(async () => {
+    setState("loading");
+    try {
+      const [pending, approved, rejected] = await Promise.all(STATUSES.map((s) => fetchModerationQueue(s)));
+      setLists({ pending, approved, rejected });
+      setState("ready");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't load the moderation queue.");
+      setState("error");
+    }
+  }, []);
 
-  const shown = rows.filter((r) => r.status === tab);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const decide = (id, status) => {
-    setRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
-    setActive(null);
-    toast({ tone: status === "approved" ? "success" : "warning", title: `Report ${status}`, description: `${id} moved to ${status}.` });
+  const decide = async (report, decision) => {
+    setBusyId(report.id);
+    try {
+      const updated = await moderateReport(report.id, decision);
+      setLists((l) => ({
+        ...l,
+        pending: l.pending.filter((r) => r.id !== report.id),
+        [updated.status]: [updated, ...l[updated.status]],
+      }));
+      setActive(null);
+      toast({
+        tone: decision === "approve" ? "success" : "warning",
+        title: `Report #${report.id} ${updated.status}`,
+        description: decision === "approve" ? "It now counts toward the public scam stats." : "It won't appear in public stats.",
+      });
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        // Someone else decided it first; reload so the screen shows the real state.
+        toast({ tone: "warning", title: "Already decided", description: err.message });
+        setActive(null);
+        load();
+      } else {
+        toast({ tone: "error", title: "Couldn't save the decision", description: err.message });
+      }
+    } finally {
+      setBusyId(null);
+    }
   };
 
   const columns = [
-    { key: "id", header: "ID", width: "110px", cell: (r) => <span className="font-mono text-xs text-muted-foreground">{r.id}</span> },
-    { key: "message", header: "Message", primary: true, cell: (r) => <span className="line-clamp-2 max-w-md text-sm">{r.message}</span> },
-    { key: "category", header: "Category", cell: (r) => <Badge tone="neutral" size="sm">{CATEGORY_BY_SLUG[r.category]?.name || r.category}</Badge> },
-    { key: "language", header: "Lang", cell: (r) => LANG[r.language] || r.language },
+    { key: "id", header: "ID", width: "80px", cell: (r) => <span className="font-mono text-xs text-muted-foreground">#{r.id}</span> },
+    {
+      key: "message",
+      header: "Message",
+      primary: true,
+      cell: (r) => <span lang={langOf(r.message)} className="line-clamp-2 max-w-md text-sm">{r.message}</span>,
+    },
+    { key: "category", header: "Category", cell: (r) => <Badge tone="neutral" size="sm">{categoryName(r.category)}</Badge> },
+    {
+      key: "date",
+      header: tab === "pending" ? "Submitted" : "Decided",
+      cell: (r) => <span className="text-xs text-muted-foreground">{when(tab === "pending" ? r.submitted_at : r.reviewed_at)}</span>,
+    },
     {
       key: "actions",
       header: "",
@@ -59,10 +120,10 @@ export default function AdminModeration() {
         <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
           {r.status === "pending" ? (
             <>
-              <Button size="icon-sm" variant="success" onClick={() => decide(r.id, "approved")} title="Approve">
+              <Button size="icon-sm" variant="success" loading={busyId === r.id} disabled={busyId !== null} onClick={() => decide(r, "approve")} title="Approve" aria-label={`Approve report ${r.id}`}>
                 <Icons.IconCheck className="h-4 w-4" />
               </Button>
-              <Button size="icon-sm" variant="danger" onClick={() => decide(r.id, "rejected")} title="Reject">
+              <Button size="icon-sm" variant="danger" disabled={busyId !== null} onClick={() => decide(r, "reject")} title="Reject" aria-label={`Reject report ${r.id}`}>
                 <Icons.IconClose className="h-4 w-4" />
               </Button>
             </>
@@ -78,39 +139,58 @@ export default function AdminModeration() {
     <div className="space-y-6">
       <PageHeader
         title="Moderation queue"
-        description="Review community-submitted scam reports before they count toward public stats."
+        description="Review community-submitted scam reports. Approved reports count toward the public scam stats, and a decision can't be undone."
         icon={<Icons.IconInbox className="h-5 w-5" />}
+        actions={
+          <Button variant="secondary" onClick={load} disabled={state === "loading"} leftIcon={<Icons.IconRefresh className="h-4 w-4" />}>
+            Refresh
+          </Button>
+        }
       />
 
       <Tabs
         value={tab}
         onChange={setTab}
         variant="pills"
-        tabs={[
-          { value: "pending", label: "Pending", count: counts.pending },
-          { value: "approved", label: "Approved", count: counts.approved },
-          { value: "rejected", label: "Rejected", count: counts.rejected },
-        ]}
+        tabs={STATUSES.map((s) => ({ value: s, label: STATUS[s].label, count: state === "ready" ? lists[s].length : undefined }))}
       />
 
-      <DataTable
-        columns={columns}
-        rows={shown}
-        onRowClick={(r) => setActive(r)}
-        empty={<EmptyState icon={<Icons.IconInbox className="h-7 w-7" />} title="Nothing here" description={`No ${tab} reports.`} />}
-      />
+      {state === "loading" && (
+        <Card className="p-6" aria-busy="true">
+          <SkeletonText lines={5} />
+        </Card>
+      )}
+
+      {state === "error" && (
+        <Card>
+          <ErrorState
+            title="Couldn't load the moderation queue"
+            description={`${error} The page reads reports from the backend at ${API_BASE}, so check that it is running.`}
+            onRetry={load}
+          />
+        </Card>
+      )}
+
+      {state === "ready" && (
+        <DataTable
+          columns={columns}
+          rows={lists[tab]}
+          onRowClick={(r) => setActive(r)}
+          empty={<EmptyState icon={<Icons.IconInbox className="h-7 w-7" />} title="Nothing here" description={EMPTY_TEXT[tab]} />}
+        />
+      )}
 
       <Modal
         open={!!active}
         onClose={() => setActive(null)}
-        title={`Report ${active?.id || ""}`}
+        title={`Report #${active?.id ?? ""}`}
         footer={
           active?.status === "pending" && (
             <>
-              <Button variant="danger" onClick={() => decide(active.id, "rejected")} leftIcon={<Icons.IconClose className="h-4 w-4" />}>
+              <Button variant="danger" disabled={busyId !== null} onClick={() => decide(active, "reject")} leftIcon={<Icons.IconClose className="h-4 w-4" />}>
                 Reject
               </Button>
-              <Button variant="success" onClick={() => decide(active.id, "approved")} leftIcon={<Icons.IconCheck className="h-4 w-4" />}>
+              <Button variant="success" loading={busyId === active.id} disabled={busyId !== null} onClick={() => decide(active, "approve")} leftIcon={<Icons.IconCheck className="h-4 w-4" />}>
                 Approve
               </Button>
             </>
@@ -121,17 +201,16 @@ export default function AdminModeration() {
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
               <Badge tone={STATUS[active.status].tone}>{STATUS[active.status].label}</Badge>
-              <Badge tone="neutral">{CATEGORY_BY_SLUG[active.category]?.name || active.category}</Badge>
-              <Badge tone="primary">{LANG[active.language] || active.language}</Badge>
+              <Badge tone="neutral">{categoryName(active.category)}</Badge>
             </div>
             <div className="rounded-lg border border-border bg-background-secondary/50 p-4">
-              <p lang={active.language === "si" ? "si" : active.language === "ta" ? "ta" : undefined} className="text-[15px] leading-relaxed text-foreground">
+              <p lang={langOf(active.message)} className="whitespace-pre-wrap text-[15px] leading-relaxed text-foreground">
                 {active.message}
               </p>
             </div>
             <dl className="grid grid-cols-2 gap-3 text-sm">
-              <div><dt className="text-muted-foreground">Reporter</dt><dd className="font-medium text-foreground">{active.reporter}</dd></div>
-              <div><dt className="text-muted-foreground">Submitted</dt><dd className="font-medium text-foreground">{new Date(active.submittedAt).toLocaleString()}</dd></div>
+              <div><dt className="text-muted-foreground">Submitted</dt><dd className="font-medium text-foreground">{when(active.submitted_at)}</dd></div>
+              <div><dt className="text-muted-foreground">Decided</dt><dd className="font-medium text-foreground">{when(active.reviewed_at)}</dd></div>
             </dl>
           </div>
         )}
