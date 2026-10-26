@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { DATASET_RECORDS, DATASET_SUMMARY } from "../../data/admin.js";
+import { DATASET_RECORDS } from "../../data/admin.js";
+import RESULTS from "../../data/modelResults.json";
 import { paginate } from "../../data/store.js";
 import { PageHeader, Card, CardHeader, CardTitle, CardContent, DataTable, Pagination, SearchInput, Select, Badge, Button, ProgressBar, Alert, EmptyState, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
@@ -24,7 +25,14 @@ export default function AdminDataset() {
   );
   const { rows, total, pageCount, page: p } = paginate(filtered, { page, pageSize: 8 });
 
-  const s = DATASET_SUMMARY;
+  const d = RESULTS.dataset;
+  const s = {
+    real: d.realTest,
+    reconstructed: d.reconstructed,
+    synthetic: d.synthetic,
+    total: d.realTest + d.reconstructed + d.synthetic,
+    target: d.realTarget,
+  };
   const realPct = Math.min(100, Math.round((s.real / s.target) * 100));
 
   const columns = [
@@ -77,6 +85,10 @@ export default function AdminDataset() {
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        The counts above are the real dataset after cleaning. The records below are sample rows for the demo: the real
+        messages are private and never shipped in the web app.
+      </p>
       <DataTable columns={columns} rows={rows} empty={<EmptyState icon={<Icons.IconDatabase className="h-7 w-7" />} title="No records" />} />
       <Pagination page={p} pageCount={pageCount} onPage={setPage} totalLabel={`${total} records`} />
     </div>

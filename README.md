@@ -72,6 +72,7 @@ python src/keyword_baseline.py       # rule-based baseline, scored on the same t
 python src/tfidf_baseline.py         # 3-way TF-IDF + LogReg/SVM trained on synthetic only; saves ml/models/*.pkl
 python src/explainability_lime.py    # LIME + TF-IDF explanations for real scam examples (private output)
 python src/evaluate.py               # real-message test (A), synthetic+real CV (B), synthetic 3-way (C)
+python src/export_web_results.py     # copies the measured results into web/src/data/modelResults.json
 ```
 `ml/data/DATASET_README.md` documents the data sources, how the synthetic data was generated, the
 evaluation protocol and the latest results.

@@ -1,8 +1,10 @@
 /**
  * Admin fixture data. This powers the admin portal's dashboards, tables and
  * detail pages so the moderation / dataset / model / evaluation workflows are
- * demonstrable without the (not-yet-built) admin backend. Values are realistic
- * placeholders — clearly labelled in the UI as demo data where relevant.
+ * demonstrable without the (not-yet-built) admin backend. These values are
+ * sample data, and AdminLayout labels every admin page as demo data. Real
+ * model results and dataset counts live in modelResults.json instead, which
+ * ml/src/export_web_results.py writes from the evaluation output.
  */
 
 /* ── Dashboard KPIs & series ────────────────────────────────────── */
@@ -13,7 +15,6 @@ export const ADMIN_KPIS = {
   spam: 3980,
   legit: 7241,
   pendingModeration: 24,
-  modelAccuracy: 0.912,
   userFeedback: 1043,
   activeUsers: 2870,
 };
@@ -56,97 +57,6 @@ export const CONFIDENCE_DIST = [
   { band: "90–100%", count: 9282 },
 ];
 
-/* ── Models & evaluation ────────────────────────────────────────── */
-
-export const MODELS = [
-  {
-    id: "tfidf-logreg",
-    name: "TF-IDF + Logistic Regression",
-    type: "Baseline (production)",
-    version: "v1.3",
-    status: "active",
-    accuracy: 0.912,
-    precision: 0.9,
-    recall: 0.88,
-    f1: 0.89,
-    auc: 0.95,
-    trainedAt: "2026-07-12",
-    dataset: "v7 (824 real + 1,500 augmented)",
-    sizeMb: 2.4,
-  },
-  {
-    id: "tfidf-svm",
-    name: "TF-IDF + Linear SVM",
-    type: "Baseline",
-    version: "v1.1",
-    status: "candidate",
-    accuracy: 0.905,
-    precision: 0.91,
-    recall: 0.85,
-    f1: 0.88,
-    auc: 0.94,
-    trainedAt: "2026-07-12",
-    dataset: "v7 (824 real + 1,500 augmented)",
-    sizeMb: 3.1,
-  },
-  {
-    id: "mbert",
-    name: "mBERT (multilingual)",
-    type: "Transformer",
-    version: "v0.4",
-    status: "experimental",
-    accuracy: 0.927,
-    precision: 0.93,
-    recall: 0.9,
-    f1: 0.915,
-    auc: 0.96,
-    trainedAt: "2026-07-14",
-    dataset: "v7 (824 real + 1,500 augmented)",
-    sizeMb: 681,
-  },
-  {
-    id: "keyword",
-    name: "Keyword baseline",
-    type: "Rule-based",
-    version: "v1.0",
-    status: "reference",
-    accuracy: 0.79,
-    precision: 0.82,
-    recall: 0.66,
-    f1: 0.73,
-    auc: 0.81,
-    trainedAt: "2026-07-01",
-    dataset: "n/a (rules)",
-    sizeMb: 0.01,
-  },
-];
-
-export const CONFUSION_MATRIX = {
-  labels: ["Scam", "Spam", "Legit"],
-  // rows = actual, cols = predicted
-  matrix: [
-    [402, 21, 17],
-    [18, 233, 24],
-    [12, 19, 471],
-  ],
-};
-
-export const PER_LANGUAGE = [
-  { language: "English", precision: 0.93, recall: 0.91, f1: 0.92, support: 512 },
-  { language: "Sinhala", precision: 0.89, recall: 0.86, f1: 0.875, support: 348 },
-  { language: "Tamil", precision: 0.86, recall: 0.82, f1: 0.84, support: 201 },
-  { language: "Singlish / mixed", precision: 0.84, recall: 0.79, f1: 0.815, support: 186 },
-];
-
-export const PER_CATEGORY = [
-  { category: "OTP fraud", precision: 0.94, recall: 0.92, f1: 0.93, support: 210 },
-  { category: "Banking", precision: 0.9, recall: 0.87, f1: 0.885, support: 188 },
-  { category: "Lottery", precision: 0.92, recall: 0.9, f1: 0.91, support: 154 },
-  { category: "Delivery", precision: 0.88, recall: 0.83, f1: 0.855, support: 121 },
-  { category: "Job / visa", precision: 0.85, recall: 0.8, f1: 0.825, support: 96 },
-  { category: "Police", precision: 0.87, recall: 0.84, f1: 0.855, support: 78 },
-];
-
 /* ── Dataset records ────────────────────────────────────────────── */
 
 const RAW_MESSAGES = [
@@ -176,16 +86,6 @@ export const DATASET_RECORDS = Array.from({ length: 48 }).map((_, i) => {
     addedAt: new Date(Date.now() - i * 36e5 * 9).toISOString().slice(0, 10),
   };
 });
-
-export const DATASET_SUMMARY = {
-  total: 2324,
-  real: 824,
-  reconstructed: 142,
-  synthetic: 1358,
-  target: 1000,
-  byLabel: { scam: 1102, spam: 486, legitimate: 736 },
-  byLanguage: { en: 951, si: 651, ta: 372, mixed: 350 },
-};
 
 /* ── Users ──────────────────────────────────────────────────────── */
 

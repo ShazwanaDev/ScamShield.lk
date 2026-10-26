@@ -6,6 +6,7 @@ import {
   AUDIT_LOG,
   SYSTEM_HEALTH,
 } from "../../data/admin.js";
+import RESULTS from "../../data/modelResults.json";
 import { TrendAreaChart, DonutChart, ChartLegend } from "../../ui/charts.jsx";
 import { PageHeader, Card, CardHeader, CardTitle, CardContent, Stat, Badge, Button, StatusDot, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
@@ -20,6 +21,8 @@ function relTime(iso) {
 }
 
 export default function AdminDashboard() {
+  const serving = RESULTS.models.find((m) => m.status === "serving");
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -36,7 +39,7 @@ export default function AdminDashboard() {
         <Stat label="Total classifications" value={ADMIN_KPIS.totalClassifications.toLocaleString()} icon={<Icons.IconShieldCheck className="h-5 w-5" />} tone="primary" delta="+6.2%" hint="vs last week" />
         <Stat label="Scams detected" value={ADMIN_KPIS.scam.toLocaleString()} icon={<Icons.IconShieldAlert className="h-5 w-5" />} tone="scam" delta="+9%" hint="vs last week" />
         <Stat label="Pending moderation" value={ADMIN_KPIS.pendingModeration} icon={<Icons.IconInbox className="h-5 w-5" />} tone="spam" />
-        <Stat label="Model accuracy" value={`${(ADMIN_KPIS.modelAccuracy * 100).toFixed(1)}%`} icon={<Icons.IconTarget className="h-5 w-5" />} tone="legit" delta="+0.4%" hint="TF-IDF + LogReg" />
+        <Stat label="Scam F1 on real messages" value={serving.real.f1.toFixed(2)} icon={<Icons.IconTarget className="h-5 w-5" />} tone="legit" hint={`${serving.name}, ${RESULTS.dataset.realTest} real messages`} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

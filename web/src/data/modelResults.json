@@ -1,0 +1,204 @@
+{
+  "evaluatedOn": "2026-10-25",
+  "scikitLearnVersion": "1.5.1",
+  "task": "Real messages are scored as scam vs not-scam; spam and legitimate both count as not-scam.",
+  "dataset": {
+    "realTest": 113,
+    "realTestScam": 45,
+    "reconstructed": 12,
+    "synthetic": 2955,
+    "syntheticTemplates": 231,
+    "syntheticTrain": 2031,
+    "syntheticVal": 490,
+    "syntheticTest": 434,
+    "realTarget": 500
+  },
+  "models": [
+    {
+      "id": "keyword",
+      "name": "Keyword baseline",
+      "type": "Rule-based",
+      "status": "baseline",
+      "real": {
+        "precision": 0.8,
+        "recall": 0.089,
+        "f1": 0.16,
+        "accuracy": 0.628,
+        "auc": 0.537,
+        "f1Ci95": [
+          0.0,
+          0.308
+        ]
+      }
+    },
+    {
+      "id": "logreg",
+      "name": "TF-IDF + Logistic Regression",
+      "type": "Machine learning",
+      "status": "serving",
+      "real": {
+        "precision": 0.559,
+        "recall": 0.844,
+        "f1": 0.673,
+        "accuracy": 0.673,
+        "auc": 0.828,
+        "f1Ci95": [
+          0.569,
+          0.765
+        ]
+      },
+      "synthetic": {
+        "macroF1": 0.782,
+        "accuracy": 0.8
+      },
+      "realCv": {
+        "f1Mean": 0.818,
+        "f1Std": 0.067,
+        "aucMean": 0.949
+      },
+      "realLabelVsPredicted": {
+        "legitimate": {
+          "legitimate": 13,
+          "scam": 30,
+          "spam": 25
+        },
+        "scam": {
+          "legitimate": 3,
+          "scam": 38,
+          "spam": 4
+        }
+      }
+    },
+    {
+      "id": "svm",
+      "name": "TF-IDF + Linear SVM",
+      "type": "Machine learning",
+      "status": "candidate",
+      "real": {
+        "precision": 0.552,
+        "recall": 0.822,
+        "f1": 0.661,
+        "accuracy": 0.664,
+        "auc": 0.791,
+        "f1Ci95": [
+          0.554,
+          0.761
+        ]
+      },
+      "synthetic": {
+        "macroF1": 0.805,
+        "accuracy": 0.816
+      },
+      "realCv": {
+        "f1Mean": 0.848,
+        "f1Std": 0.06,
+        "aucMean": 0.942
+      },
+      "realLabelVsPredicted": {
+        "legitimate": {
+          "legitimate": 14,
+          "scam": 30,
+          "spam": 24
+        },
+        "scam": {
+          "legitimate": 4,
+          "scam": 37,
+          "spam": 4
+        }
+      }
+    },
+    {
+      "id": "mbert",
+      "name": "mBERT (multilingual)",
+      "type": "Transformer",
+      "status": "not_trained"
+    }
+  ],
+  "perLanguage": [
+    {
+      "set": "synthetic",
+      "language": "code_mixed",
+      "n": 87,
+      "nScam": 32,
+      "scamRecall": 0.969,
+      "scamF1": 0.969,
+      "macroF1": 0.965
+    },
+    {
+      "set": "synthetic",
+      "language": "english",
+      "n": 88,
+      "nScam": 35,
+      "scamRecall": 1.0,
+      "scamF1": 0.843,
+      "macroF1": 0.877
+    },
+    {
+      "set": "synthetic",
+      "language": "singlish",
+      "n": 79,
+      "nScam": 40,
+      "scamRecall": 1.0,
+      "scamF1": 0.842,
+      "macroF1": 0.614
+    },
+    {
+      "set": "synthetic",
+      "language": "sinhala",
+      "n": 54,
+      "nScam": 38,
+      "scamRecall": 0.974,
+      "scamF1": 0.831,
+      "macroF1": 0.372
+    },
+    {
+      "set": "synthetic",
+      "language": "tamil",
+      "n": 83,
+      "nScam": 19,
+      "scamRecall": 1.0,
+      "scamF1": 0.603,
+      "macroF1": 0.411
+    },
+    {
+      "set": "synthetic",
+      "language": "thanglish",
+      "n": 43,
+      "nScam": 15,
+      "scamRecall": 1.0,
+      "scamF1": 1.0,
+      "macroF1": 1.0
+    },
+    {
+      "set": "real",
+      "language": "code_mixed",
+      "n": 16,
+      "nScam": 2,
+      "scamRecall": 1.0,
+      "scamF1": 0.333,
+      "macroF1": null
+    },
+    {
+      "set": "real",
+      "language": "english",
+      "n": 81,
+      "nScam": 35,
+      "scamRecall": 0.857,
+      "scamF1": 0.732,
+      "macroF1": null
+    },
+    {
+      "set": "real",
+      "language": "singlish",
+      "n": 12,
+      "nScam": 7,
+      "scamRecall": 0.714,
+      "scamF1": 0.667,
+      "macroF1": null
+    }
+  ],
+  "reconstructedDetected": {
+    "logreg": 1.0,
+    "svm": 1.0
+  }
+}

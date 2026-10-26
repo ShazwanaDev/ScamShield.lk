@@ -132,14 +132,14 @@ export function ChartLegend({ data, className }) {
   );
 }
 
-export function ComparisonLineChart({ data, keys, height = 260, className }) {
+export function ComparisonLineChart({ data, keys, height = 260, domain = [0.6, 1], className }) {
   return (
     <div className={cn("w-full", className)} style={{ height }}>
       <ResponsiveContainer>
         <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={GRID} vertical={false} />
           <XAxis dataKey="label" tick={AXIS} tickLine={false} axisLine={false} />
-          <YAxis tick={AXIS} tickLine={false} axisLine={false} width={40} domain={[0.6, 1]} />
+          <YAxis tick={AXIS} tickLine={false} axisLine={false} width={40} domain={domain} />
           <Tooltip content={<ChartTooltip />} />
           <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
           {keys.map((k) => (
