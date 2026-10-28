@@ -1,8 +1,7 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import { mockLogin, mockRegister } from "../lib/api.js";
+import { adminSignIn, adminSignOut, getAdminToken, mockLogin, mockRegister } from "../lib/api.js";
 
 const USER_KEY = "scamshield_mock_user";
-const ADMIN_KEY = "scamshield_mock_admin";
 
 const AuthContext = createContext(null);
 
@@ -16,13 +15,14 @@ function readUser() {
 }
 
 /**
- * Frontend-only mock auth session. No real backend auth exists yet (see lib/api.js), so
- * "logging in" just stores a fake token locally — this is not real access control and
- * must not be treated as one if this app ships beyond a demo/research context.
+ * User accounts are still a frontend-only mock: no backend user auth exists yet (see
+ * lib/api.js), so "logging in" just stores a fake token locally and is not real access
+ * control. Admin sign-in is real: the backend checks the passphrase and issues a signed
+ * token, and the moderation API refuses requests without it.
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readUser);
-  const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem(ADMIN_KEY) === "1");
+  const [isAdmin, setIsAdmin] = useState(() => Boolean(getAdminToken()));
 
   const login = useCallback(async (email, password) => {
     const account = await mockLogin(email, password);
@@ -43,17 +43,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  const adminLogin = useCallback((passphrase) => {
-    const configured = import.meta.env.VITE_ADMIN_PASSPHRASE;
-    if (!configured) return { ok: false, reason: "not_configured" };
-    if (passphrase !== configured) return { ok: false, reason: "wrong" };
-    sessionStorage.setItem(ADMIN_KEY, "1");
+  /** Throws ApiError on failure (401 wrong passphrase, 429 too many tries, 503 not set up). */
+  const adminLogin = useCallback(async (passphrase) => {
+    await adminSignIn(passphrase);
     setIsAdmin(true);
-    return { ok: true };
   }, []);
 
   const adminLogout = useCallback(() => {
-    sessionStorage.removeItem(ADMIN_KEY);
+    adminSignOut();
     setIsAdmin(false);
   }, []);
 

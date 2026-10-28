@@ -93,23 +93,24 @@ docker compose up -d
 cd backend
 export DATABASE_URL=postgresql://scamshield:scamshield@localhost:5432/scamshield
 export REDIS_URL=redis://localhost:6379/0
+export SECRET_KEY=<a long random value>     # signs admin sessions
+export ADMIN_PASSWORD=<your admin passphrase>  # admin sign-in stays off while unset
 flask --app app run --debug
 ```
-API will be live at `http://localhost:5000`.
+API will be live at `http://localhost:5000`. With Docker Compose, put `SECRET_KEY` and
+`ADMIN_PASSWORD` in a `.env` file next to `docker-compose.yml` (see `.env.example`).
 
 ### 3.6 Web frontend
 ```bash
 cd web
-cp .env.example .env    # set VITE_API_URL and VITE_ADMIN_PASSPHRASE
+cp .env.example .env    # set VITE_API_URL
 npm install
 npm run dev
 ```
-Routes: `/` (classify), `/report`, `/dashboard`, `/admin/moderation` (passphrase-gated demo
-deterrent only — see note below), `/about`.
-
-⚠️ `/admin/moderation`'s passphrase gate is client-side only (it ships inside the built JS
-and is not real access control). The backend `/api/moderate*` routes have **no server-side
-auth at all** — this must be fixed before any real deployment, not just for the demo period.
+The public site, the user portal (`/app`) and the admin console (`/admin`) all run from this
+app. Admin sign-in at `/admin/login` is checked by the backend: the passphrase is the
+backend's `ADMIN_PASSWORD`, and the moderation API refuses requests without the signed
+session token it hands out. User accounts in `/app` are still a frontend-only mock.
 
 ### 3.7 Mobile app
 ```bash

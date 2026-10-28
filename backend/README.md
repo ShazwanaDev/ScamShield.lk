@@ -48,6 +48,21 @@ idempotent — safe to re-run on every deploy) before handing off to gunicorn.
 - `model_versions` — one `is_active=True` row, so `/api/predict` has a model version to
   stamp classifications with.
 
+## Admin sign-in
+
+The moderation endpoints (`GET /api/moderate`, `POST /api/moderate/<id>`) need an admin
+token. The backend reads two settings from the environment:
+
+- `ADMIN_PASSWORD`: the admin console passphrase. While it is empty, sign-in answers 503
+  and moderation stays locked.
+- `SECRET_KEY`: signs the tokens. Set a long random value; if it is missing, a random one is
+  made at start-up, so every restart signs admins out.
+
+`POST /api/admin/login` with `{"passphrase": "..."}` returns `{"token", "expires_in"}`.
+Tokens last 8 hours and are sent back as `Authorization: Bearer <token>`. After 5 wrong
+passphrases from one address in 15 minutes, sign-in answers 429. That counter lives in
+memory, so it is per process and resets on restart.
+
 ## Prediction
 
 `/api/predict` loads `ml/models/tfidf_vectorizer.pkl` and `ml/models/logreg_model.pkl` on the

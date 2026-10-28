@@ -1,6 +1,6 @@
 """
 /api/submit-sms   — user submits a suspected scam message into the moderation queue
-/api/moderate      — admin approves/rejects queued reports
+/api/moderate      — admin approves/rejects queued reports (admin token required)
 /api/stats         — public counters + weekly category breakdown for the dashboard
 """
 from datetime import datetime, timedelta
@@ -8,6 +8,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import func
 
 from models.db import db, ScamReport, ScamCategory
+from routes.auth import require_admin
 from routes.classify import MAX_MESSAGE_LENGTH
 
 community_bp = Blueprint("community", __name__)
@@ -51,6 +52,7 @@ def submit_sms():
 
 
 @community_bp.get("/moderate")
+@require_admin
 def list_reports():
     """
     Admin: list reports with one moderation status, pending by default
@@ -84,6 +86,7 @@ def _report_json(report):
 
 
 @community_bp.post("/moderate/<int:report_id>")
+@require_admin
 def moderate_report(report_id):
     """
     Admin approve/reject decision branch — this is the piece that was missing

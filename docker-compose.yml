@@ -25,6 +25,9 @@ services:
     environment:
       DATABASE_URL: postgresql://scamshield:scamshield@postgres:5432/scamshield
       REDIS_URL: redis://redis:6379/0
+      # read from the .env file next to this one; admin sign-in stays off until ADMIN_PASSWORD is set
+      SECRET_KEY: ${SECRET_KEY:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     ports:
       - "5000:5000"
     volumes:

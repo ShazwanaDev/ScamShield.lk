@@ -8,11 +8,11 @@ class ApiError extends Error {
   }
 }
 
-async function request(path, options = {}) {
+async function request(path, { headers, ...options } = {}) {
   let res;
   try {
     res = await fetch(`${API_BASE}${path}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...headers },
       ...options,
     });
   } catch {
@@ -88,14 +88,57 @@ export function fetchStats() {
   return request("/stats");
 }
 
+/*
+ * Admin session. The backend checks the passphrase and returns a signed token
+ * that expires after a working day; moderation requests send it back in an
+ * Authorization header. It lives in sessionStorage, so closing the tab signs
+ * the admin out.
+ */
+const ADMIN_TOKEN_KEY = "scamshield_admin_token";
+
+export function getAdminToken() {
+  try {
+    return sessionStorage.getItem(ADMIN_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function setAdminToken(token) {
+  try {
+    if (token) sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+    else sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+  } catch {
+    // storage blocked (private mode); the session just won't survive a reload
+  }
+}
+
+function adminHeaders() {
+  const token = getAdminToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function adminSignIn(passphrase) {
+  const { token } = await request("/admin/login", {
+    method: "POST",
+    body: JSON.stringify({ passphrase }),
+  });
+  setAdminToken(token);
+}
+
+export function adminSignOut() {
+  setAdminToken(null);
+}
+
 /** `status` is "pending" (the queue), "approved" or "rejected". */
 export function fetchModerationQueue(status = "pending") {
-  return request(`/moderate?status=${encodeURIComponent(status)}`);
+  return request(`/moderate?status=${encodeURIComponent(status)}`, { headers: adminHeaders() });
 }
 
 export function moderateReport(reportId, decision) {
   return request(`/moderate/${reportId}`, {
     method: "POST",
+    headers: adminHeaders(),
     body: JSON.stringify({ decision }),
   });
 }

@@ -1,36 +1,37 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.jsx";
+import { ApiError } from "../../lib/api.js";
 import Brand from "../../components/Brand.jsx";
-import { Button, Field, Input, Alert, cn } from "../../ui/index.js";
+import { Button, Field, Input, Alert } from "../../ui/index.js";
 import { IconLock, IconShieldCheck, IconKey } from "../../components/icons.jsx";
+
+function messageFor(err) {
+  if (!(err instanceof ApiError)) return "Something went wrong. Please try again.";
+  if (err.status === 401) return "Incorrect passphrase.";
+  if (err.status === 503) return "Admin sign-in isn't set up on the server yet. Set ADMIN_PASSWORD in the backend's environment.";
+  return err.message; // 429 (too many tries) and network errors already read well
+}
 
 export default function AdminLogin() {
   const { adminLogin } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState("password"); // password | twofa
+  const location = useLocation();
   const [passphrase, setPassphrase] = useState("");
-  const [code, setCode] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const submitPass = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setError(null);
-    const res = adminLogin(passphrase);
-    if (res.ok) {
-      setStep("twofa");
-    } else if (res.reason === "not_configured") {
-      setError("Admin access isn't configured in this build (VITE_ADMIN_PASSPHRASE is unset).");
-    } else {
-      setError("Incorrect passphrase.");
-    }
-  };
-
-  const submit2fa = (e) => {
-    e.preventDefault();
     setBusy(true);
-    setTimeout(() => navigate("/admin"), 500);
+    try {
+      await adminLogin(passphrase);
+      navigate(location.state?.from?.pathname || "/admin", { replace: true });
+    } catch (err) {
+      setError(messageFor(err));
+      setBusy(false);
+    }
   };
 
   return (
@@ -47,51 +48,32 @@ export default function AdminLogin() {
             </span>
             <div>
               <h1 className="text-lg font-bold text-foreground">Admin console</h1>
-              <p className="text-sm text-muted-foreground">{step === "password" ? "Restricted access" : "Two-factor verification"}</p>
+              <p className="text-sm text-muted-foreground">Restricted access</p>
             </div>
           </div>
 
-          {step === "password" ? (
-            <form onSubmit={submitPass} className="space-y-4">
-              {error && <Alert tone="error">{error}</Alert>}
-              <Field label="Admin passphrase" required>
-                <Input
-                  type="password"
-                  value={passphrase}
-                  onChange={(e) => setPassphrase(e.target.value)}
-                  placeholder="Enter passphrase"
-                  leftIcon={<IconLock className="h-4 w-4" />}
-                  autoFocus
-                  required
-                />
-              </Field>
-              <Button type="submit" size="lg" fullWidth leftIcon={<IconKey className="h-5 w-5" />}>
-                Continue
-              </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                Note: this gate is client-side only — real deployments must enforce auth server-side.
-              </p>
-            </form>
-          ) : (
-            <form onSubmit={submit2fa} className="space-y-4">
-              <Alert tone="info">A 6-digit code was sent to the admin device.</Alert>
-              <Field label="Verification code" required>
-                <Input
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                  placeholder="000000"
-                  className="text-center text-lg tracking-[0.4em]"
-                  autoFocus
-                  required
-                />
-              </Field>
-              <Button type="submit" size="lg" fullWidth loading={busy} disabled={code.length !== 6}>
-                Verify & sign in
-              </Button>
-            </form>
-          )}
+          <form onSubmit={submit} className="space-y-4">
+            {error && <Alert tone="error">{error}</Alert>}
+            <Field label="Admin passphrase" required>
+              <Input
+                type="password"
+                autoComplete="current-password"
+                value={passphrase}
+                onChange={(e) => setPassphrase(e.target.value)}
+                placeholder="Enter passphrase"
+                leftIcon={<IconLock className="h-4 w-4" />}
+                autoFocus
+                required
+                disabled={busy}
+              />
+            </Field>
+            <Button type="submit" size="lg" fullWidth loading={busy} leftIcon={<IconKey className="h-5 w-5" />}>
+              Sign in
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              The passphrase is checked by the server. Sessions end after 8 hours or when you close the tab.
+            </p>
+          </form>
         </div>
       </div>
     </div>

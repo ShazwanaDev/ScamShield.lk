@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { API_BASE, ApiError, fetchModerationQueue, moderateReport } from "../../lib/api.js";
+import { useAuth } from "../../hooks/useAuth.jsx";
 import { CATEGORY_BY_SLUG } from "../../data/scamCategories.js";
 import {
   PageHeader,
@@ -45,12 +46,20 @@ function categoryName(slug) {
 
 export default function AdminModeration() {
   const { toast } = useToast();
+  const { adminLogout } = useAuth();
   const [lists, setLists] = useState({ pending: [], approved: [], rejected: [] });
   const [state, setState] = useState("loading"); // loading | ready | error
   const [error, setError] = useState(null);
   const [tab, setTab] = useState("pending");
   const [active, setActive] = useState(null);
   const [busyId, setBusyId] = useState(null);
+
+  // The server refused our token (expired, or the server restarted with a new
+  // key). Signing out sends the admin back to the sign-in page.
+  const signedOut = useCallback(() => {
+    toast({ tone: "warning", title: "Signed out", description: "Your admin session has ended. Please sign in again." });
+    adminLogout();
+  }, [toast, adminLogout]);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -59,10 +68,11 @@ export default function AdminModeration() {
       setLists({ pending, approved, rejected });
       setState("ready");
     } catch (err) {
+      if (err instanceof ApiError && err.status === 401) return signedOut();
       setError(err instanceof ApiError ? err.message : "Couldn't load the moderation queue.");
       setState("error");
     }
-  }, []);
+  }, [signedOut]);
 
   useEffect(() => {
     load();
@@ -84,7 +94,9 @@ export default function AdminModeration() {
         description: decision === "approve" ? "It now counts toward the public scam stats." : "It won't appear in public stats.",
       });
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
+      if (err instanceof ApiError && err.status === 401) {
+        signedOut();
+      } else if (err instanceof ApiError && err.status === 409) {
         // Someone else decided it first; reload so the screen shows the real state.
         toast({ tone: "warning", title: "Already decided", description: err.message });
         setActive(null);
