@@ -44,6 +44,7 @@ export const REPORT_CATEGORIES = [
   { value: "bank_transfer_scam", label: "Banking / bank transfer" },
   { value: "otp_fraud", label: "OTP fraud" },
   { value: "loan_scam", label: "Loan scam" },
+  { value: "job_scam", label: "Job / foreign employment" },
   { value: "delivery_scam", label: "Delivery / courier scam" },
   { value: "police_impersonation", label: "Police impersonation" },
   { value: "subscription_scam", label: "Subscription scam" },

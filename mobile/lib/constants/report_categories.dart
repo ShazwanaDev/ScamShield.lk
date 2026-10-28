@@ -11,6 +11,7 @@ const List<ReportCategory> kReportCategories = [
   ReportCategory('bank_transfer_scam', 'Banking / bank transfer'),
   ReportCategory('otp_fraud', 'OTP fraud'),
   ReportCategory('loan_scam', 'Loan scam'),
+  ReportCategory('job_scam', 'Job / foreign employment'),
   ReportCategory('delivery_scam', 'Delivery / courier scam'),
   ReportCategory('police_impersonation', 'Police impersonation'),
   ReportCategory('subscription_scam', 'Subscription scam'),
