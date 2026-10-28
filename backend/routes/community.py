@@ -8,6 +8,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import func
 
 from models.db import db, ScamReport, ScamCategory
+from routes.classify import MAX_MESSAGE_LENGTH
 
 community_bp = Blueprint("community", __name__)
 
@@ -18,13 +19,22 @@ LIST_LIMIT = 200
 
 @community_bp.post("/submit-sms")
 def submit_sms():
-    payload = request.get_json(force=True)
-    message = payload.get("message", "").strip()
-    category_name = payload.get("category")
+    payload = request.get_json(force=True, silent=True)
+    if not isinstance(payload, dict) or not isinstance(payload.get("message"), str):
+        return jsonify({"error": "send a JSON object with a 'message' string"}), 400
 
+    message = payload["message"].strip()
     if not message:
         return jsonify({"error": "message field is required"}), 400
+    if len(message) > MAX_MESSAGE_LENGTH:
+        return jsonify({"error": f"message must be {MAX_MESSAGE_LENGTH} characters or fewer"}), 400
 
+    category_name = payload.get("category")
+    if category_name is not None and not isinstance(category_name, str):
+        return jsonify({"error": "category must be a string"}), 400
+
+    # An unknown category name is stored as "no category" rather than refused,
+    # so an out-of-date app version can still get its report through.
     category = None
     if category_name:
         category = ScamCategory.query.filter_by(name=category_name).first()
