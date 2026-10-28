@@ -16,7 +16,7 @@ const GROUPS = [
   {
     title: "Privacy & data",
     items: [
-      { q: "Is my message stored or shared?", a: "Messages you check are analysed for you and not shared. Please redact any personal details (OTPs, card numbers, NIC) you don't want to type." },
+      { q: "Is my message stored or shared?", a: "Messages you check are stored on our server with the result, so the model's accuracy can be measured and improved. They are never shared or sold. Please leave out personal details (OTPs, card numbers, NIC) you don't want stored." },
       { q: "Do I need an account?", a: "No. Checking messages is free and needs no sign-up. An account simply lets you keep a private history and manage reports." },
     ],
   },

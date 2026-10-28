@@ -10,7 +10,7 @@ import { IconShieldCheck, IconGlobe, IconWand, IconLock } from "../../components
 const ASSURANCES = [
   { icon: IconGlobe, title: "Multilingual", text: "Sinhala, Tamil, English, Singlish & code-mixed." },
   { icon: IconWand, title: "Explainable", text: "See the exact words that make a message risky." },
-  { icon: IconLock, title: "Private", text: "Messages are analysed for you and not shared." },
+  { icon: IconLock, title: "Never shared", text: "Messages are stored to improve the model, but never shared or sold." },
 ];
 
 export default function CheckPage() {

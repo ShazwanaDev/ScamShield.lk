@@ -53,7 +53,7 @@ export default function SiteFooter() {
             </p>
             <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs font-medium text-teal-light ring-1 ring-inset ring-white/10">
               <IconShieldCheck className="h-4 w-4" />
-              Privacy-first · messages are not shared
+              Messages are never shared or sold
             </p>
           </div>
           {COLS.map((col) => (

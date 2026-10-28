@@ -71,7 +71,7 @@ class ArticleDetailScreen extends StatelessWidget {
                 children: [
                   const Text('Got a message you\'re unsure about?', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800, color: Colors.white)),
                   const SizedBox(height: 4),
-                  Text('Check it in seconds — free and private.', style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.7))),
+                  Text('Check it in seconds. It is free, and never shared.', style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.7))),
                   const SizedBox(height: 14),
                   FilledButton.icon(
                     onPressed: () => context.go('/home'),

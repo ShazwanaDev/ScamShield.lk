@@ -49,7 +49,7 @@ export default function AppHistory() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="History" description="Every message you've checked, kept privately on your account." icon={<Icons.IconHistory className="h-5 w-5" />} />
+      <PageHeader title="History" description="Every message you've checked in this browser, kept on this device." icon={<Icons.IconHistory className="h-5 w-5" />} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="w-full sm:max-w-xs">

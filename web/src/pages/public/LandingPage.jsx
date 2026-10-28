@@ -24,7 +24,7 @@ const VERDICT_CARDS = [
 ];
 
 const FAQS = [
-  { q: "Is my message stored or shared?", a: "No. Messages you check are analysed for you and not shared. Redact any personal details you don't want to type." },
+  { q: "Is my message stored or shared?", a: "Stored, yes; shared, never. Checked messages are kept on our server to measure and improve the model. Leave out personal details you don't want stored." },
   { q: "Which languages are supported?", a: "English, Sinhala, Tamil, Singlish, Thanglish, and code-mixed messages — the way people actually text in Sri Lanka." },
   { q: "Is this affiliated with a bank or the government?", a: "No. ScamShield LK is an independent research project for scam awareness. Always verify through official channels." },
   { q: "Can it be wrong?", a: "Yes — no detector is perfect. Treat the result as guidance, and when unsure, verify with the real organisation directly." },

@@ -4,7 +4,7 @@ import * as Icons from "../../components/icons.jsx";
 import { Card, Button, SectionHeading } from "../../ui/index.js";
 
 const VALUES = [
-  { icon: Icons.IconLock, title: "Privacy-first", text: "Messages are analysed for you and not shared. We minimise the data we handle." },
+  { icon: Icons.IconLock, title: "Privacy-first", text: "Checked messages are stored to measure and improve the model, but never shared or sold. Leave out personal details." },
   { icon: Icons.IconWand, title: "Transparent", text: "Every result is explained. We'd rather teach you to spot scams than ask for blind trust." },
   { icon: Icons.IconGlobe, title: "Inclusive", text: "Built for every language Sri Lankans text in — not just clean English." },
   { icon: Icons.IconUsers, title: "Community-driven", text: "Reports and feedback from real people make detection better for everyone." },

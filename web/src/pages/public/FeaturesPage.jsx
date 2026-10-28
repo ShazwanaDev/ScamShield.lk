@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: Icons.IconMegaphone, title: "Community alerts", text: "See verified warnings about scams circulating right now, updated by moderators." },
   { icon: Icons.IconFlag, title: "Report & warn others", text: "Flag a scam in seconds; approved reports feed public stats and detection." },
   { icon: Icons.IconBookOpen, title: "Awareness hub", text: "Practical guides and a quiz to sharpen your scam-spotting instincts." },
-  { icon: Icons.IconLock, title: "Privacy-first", text: "Messages are analysed for you and not shared. Redact anything sensitive." },
+  { icon: Icons.IconLock, title: "Privacy-first", text: "Messages are never shared or sold. Checked messages are stored to improve the model, so leave out anything sensitive." },
 ];
 
 export default function FeaturesPage() {

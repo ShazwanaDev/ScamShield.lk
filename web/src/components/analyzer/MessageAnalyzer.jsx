@@ -89,7 +89,7 @@ export default function MessageAnalyzer({ onResult, autoFocus = false }) {
         <div className="mt-2 flex items-center justify-between">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <IconLock className="h-3.5 w-3.5" />
-            Your message is analysed privately and not shared.
+            Checked messages are stored to improve the model, never shared. Leave out OTPs and card numbers.
           </p>
           <span className={cn("text-xs tabular-nums", text.length > MAX * 0.9 ? "text-spam" : "text-muted-foreground")}>
             {text.length}/{MAX}

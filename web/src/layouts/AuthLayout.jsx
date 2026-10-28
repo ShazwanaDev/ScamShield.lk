@@ -5,7 +5,7 @@ import { IconShieldCheck, IconGlobe, IconWand, IconLock } from "../components/ic
 const POINTS = [
   { icon: IconGlobe, text: "Understands Sinhala, Tamil, English, Singlish & code-mixed SMS" },
   { icon: IconWand, text: "Explains every result — see the exact risky phrases" },
-  { icon: IconLock, text: "Privacy-first — your messages are analysed, not shared" },
+  { icon: IconLock, text: "Your messages are never shared or sold" },
 ];
 
 export default function AuthLayout() {

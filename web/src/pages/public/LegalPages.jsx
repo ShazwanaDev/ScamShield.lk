@@ -42,23 +42,29 @@ export function PrivacyPage() {
     <LegalDoc
       eyebrow="Privacy & data protection"
       title="Privacy policy"
-      updated="21 July 2026"
+      updated="28 October 2026"
       icon={<Icons.IconLock className="h-3.5 w-3.5" />}
       sections={[
         {
           h: "Our approach",
           p: [
-            "ScamShield LK is built to minimise the personal data it handles. Checking a message does not require an account, and the messages you check are analysed for you and not shared with third parties.",
+            "ScamShield LK is built to minimise the personal data it handles. Checking a message does not require an account. The messages you check are stored, but never shared with third parties or sold.",
           ],
         },
         {
           h: "What we process",
           p: ["Depending on how you use the service, we may process:"],
           list: [
-            "The text of messages you submit for classification (to return a result).",
+            "The text of messages you submit for classification. It is stored on our server with the result, so the model's accuracy can be measured and improved.",
             "Optional account details (email) if you choose to register.",
             "Reports you submit to the community moderation queue.",
             "Basic, non-identifying usage information to improve the service.",
+          ],
+        },
+        {
+          h: "How long we keep it",
+          p: [
+            "ScamShield LK is a research project and there is no automatic deletion yet. Checked messages and reports stay on the server until the project team removes them.",
           ],
         },
         {
