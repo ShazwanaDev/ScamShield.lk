@@ -1,5 +1,5 @@
 class ClassificationResult {
-  final String label; // 'scam' | 'legitimate'
+  final String label; // 'scam' | 'spam' | 'legitimate'
   final double confidence;
   final List<Map<String, dynamic>> triggerWords;
   final bool isOffline;

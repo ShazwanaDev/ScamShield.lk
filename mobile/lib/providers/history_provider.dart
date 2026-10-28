@@ -57,7 +57,7 @@ final filteredHistoryProvider = Provider<AsyncValue<List<HistoryEntry>>>((ref) {
       final matchesFilter = switch (filter) {
         HistoryFilter.all => true,
         HistoryFilter.scam => e.isScam,
-        HistoryFilter.legitimate => !e.isScam,
+        HistoryFilter.legitimate => e.label == 'legitimate',
       };
       final matchesQuery = query.isEmpty || e.message.toLowerCase().contains(query);
       return matchesFilter && matchesQuery;

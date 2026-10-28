@@ -73,7 +73,7 @@ class _DetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tone = entry.isScam ? AppColors.danger : AppColors.success;
+    final tone = verdictColors(entry.label).tone;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -82,7 +82,7 @@ class _DetailBody extends ConsumerWidget {
         children: [
           Row(
             children: [
-              ScamBadge(isScam: entry.isScam, confidence: entry.confidence, large: true),
+              ScamBadge(label: entry.label, confidence: entry.confidence, large: true),
               const Spacer(),
               if (entry.isOffline)
                 const Icon(Icons.wifi_off_rounded, size: 18, color: AppColors.onSurfaceMuted),

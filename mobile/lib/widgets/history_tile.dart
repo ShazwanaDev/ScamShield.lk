@@ -25,7 +25,7 @@ class HistoryTile extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        ScamBadge(isScam: entry.isScam, confidence: entry.confidence),
+                        ScamBadge(label: entry.label, confidence: entry.confidence),
                         const SizedBox(width: 8),
                         if (entry.isOffline)
                           const Icon(Icons.wifi_off_rounded, size: 13, color: AppColors.onSurfaceMuted),

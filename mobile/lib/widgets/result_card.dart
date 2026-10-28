@@ -15,8 +15,7 @@ class ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isScam = result.isScam;
-    final tone = isScam ? AppColors.danger : AppColors.success;
-    final bg = isScam ? AppColors.dangerBg : AppColors.successBg;
+    final (:tone, :bg) = verdictColors(result.label);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -28,7 +27,7 @@ class ResultCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ScamBadge(isScam: isScam, confidence: result.confidence, large: true),
+          ScamBadge(label: result.label, confidence: result.confidence, large: true),
           if (result.isOffline) ...[
             const SizedBox(height: 10),
             const Row(
