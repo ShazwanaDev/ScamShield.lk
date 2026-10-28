@@ -10,13 +10,20 @@ scam class.
 
 Usage:
     python src/explainability_lime.py
-Output contains real message text, so it is written to ml/data/processed/
-(gitignored), not ml/models/.
+
+Outputs, split by whether they quote message text:
+  ml/data/processed/ (gitignored)  real-message explanations and their figures
+  ml/models/figures/ (tracked)     synthetic-message explanations, and the
+                                   words the model weighs most overall
 """
 import json
 import os
 
 import joblib
+import matplotlib
+
+matplotlib.use("Agg")  # file output only; no display needed
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from lime.lime_text import LimeTextExplainer
@@ -25,7 +32,14 @@ from preprocessing import DATASET_PATH, PROCESSED_DIR
 from text_cleaning import tokenize
 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
+PUBLIC_FIGURES_DIR = os.path.join(MODELS_DIR, "figures")
+PRIVATE_FIGURES_DIR = os.path.join(PROCESSED_DIR, "figures")
 TARGET_CLASS = "scam"
+PLACEHOLDER_LABELS = {"__url__": "[link]", "__phone__": "[phone number]"}
+
+# Nirmala UI (Windows) and the Noto fonts cover Sinhala and Tamil script; the
+# first one installed is used, so figures render on Windows and on Colab.
+plt.rcParams["font.family"] = ["Nirmala UI", "Iskoola Pota", "Noto Sans Sinhala", "Noto Sans Tamil", "DejaVu Sans"]
 
 
 def class_coefficients(model, target=TARGET_CLASS):
@@ -71,34 +85,82 @@ def lime_explanation(message: str, vectorizer, model, num_features=6):
     return exp.as_list(label=target_idx)
 
 
-def main():
-    vectorizer = joblib.load(os.path.join(MODELS_DIR, "tfidf_vectorizer.pkl"))
-    logreg = joblib.load(os.path.join(MODELS_DIR, "logreg_model.pkl"))
+def readable(feature):
+    for token, label in PLACEHOLDER_LABELS.items():
+        feature = feature.replace(token, label)
+    return feature
 
-    df = pd.read_csv(DATASET_PATH)
-    sample = df[(df["split"] == "real_eval") & (df["label"] == "scam")].head(5)
 
+def plot_weights(pairs, title, path):
+    """Horizontal bars, red for words pushing towards scam and green for away."""
+    words = [readable(w) for w, _ in pairs][::-1]
+    weights = [float(w) for _, w in pairs][::-1]
+    fig, ax = plt.subplots(figsize=(7, 0.42 * len(pairs) + 1.4))
+    ax.barh(words, weights, color=["#D92D20" if w > 0 else "#079455" for w in weights])
+    ax.axvline(0, color="#667085", linewidth=0.8)
+    ax.set_xlabel("Weight towards scam (red) or away from scam (green)")
+    ax.set_title(title, fontsize=11)
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+
+
+def explain_rows(rows, vectorizer, model, figure_dir, prefix):
+    scam_idx = list(model.classes_).index(TARGET_CLASS)
     outputs = []
-    for _, row in sample.iterrows():
+    for n, (_, row) in enumerate(rows.iterrows(), start=1):
         msg = row["clean_message"]
-        fast_exp = tfidf_feature_importance(msg, vectorizer, logreg)
-        lime_exp = lime_explanation(msg, vectorizer, logreg)
+        proba = model.predict_proba(vectorizer.transform([msg]))[0]
+        fast_exp = tfidf_feature_importance(msg, vectorizer, model)
+        lime_exp = lime_explanation(msg, vectorizer, model)
         outputs.append({
             "id": row["id"],
+            "label": row["label"],
+            "predicted": str(model.classes_[int(np.argmax(proba))]),
             "message": msg,
-            "scam_probability": float(logreg.predict_proba(vectorizer.transform([msg]))[0][list(logreg.classes_).index(TARGET_CLASS)]),
+            "scam_probability": float(proba[scam_idx]),
             "tfidf_feature_importance": fast_exp,
             "lime_explanation": lime_exp,
         })
-        print(f"\n[{row['id']}] scam probability {outputs[-1]['scam_probability']:.2f}")
-        print(f"  TF-IDF top features: {fast_exp}")
-        print(f"  LIME explanation:    {lime_exp}")
+        title = f"{prefix} {n} (labelled {row['label']}): LIME, scam probability {proba[scam_idx]:.2f}"
+        plot_weights(lime_exp, title, os.path.join(figure_dir, f"lime_{prefix.lower().replace(' ', '_')}_{n}.png"))
+        print(f"[{row['id']}] {row['label']}, scam probability {proba[scam_idx]:.2f}: {lime_exp}")
+    return outputs
 
-    os.makedirs(PROCESSED_DIR, exist_ok=True)
-    out_path = os.path.join(PROCESSED_DIR, "sample_explanations.json")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(outputs, f, indent=2, ensure_ascii=False)
-    print(f"\nSaved sample explanations to {out_path}")
+
+def plot_top_features(vectorizer, model, path, top_n=15):
+    """The words the model weighs most, in either direction, across all messages."""
+    names = np.array(vectorizer.get_feature_names_out())
+    coefs = class_coefficients(model)
+    order = np.argsort(coefs)
+    pairs = [(names[i], coefs[i]) for i in order[::-1][:top_n]] + [(names[i], coefs[i]) for i in order[:top_n][::-1]]
+    plot_weights(pairs, "Words the model weighs most towards and away from scam", path)
+
+
+def main():
+    vectorizer = joblib.load(os.path.join(MODELS_DIR, "tfidf_vectorizer.pkl"))
+    logreg = joblib.load(os.path.join(MODELS_DIR, "logreg_model.pkl"))
+    df = pd.read_csv(DATASET_PATH)
+    os.makedirs(PUBLIC_FIGURES_DIR, exist_ok=True)
+    os.makedirs(PRIVATE_FIGURES_DIR, exist_ok=True)
+
+    # Real scams: these quote real messages, so everything stays in the gitignored folder.
+    real = df[(df["split"] == "real_eval") & (df["label"] == "scam")].head(5)
+    real_out = explain_rows(real, vectorizer, logreg, PRIVATE_FIGURES_DIR, "Real example")
+    with open(os.path.join(PROCESSED_DIR, "sample_explanations.json"), "w", encoding="utf-8") as f:
+        json.dump(real_out, f, indent=2, ensure_ascii=False)
+
+    # One synthetic test message per label: safe to publish in the repo and the report.
+    synth = df[df["split"] == "synth_test"]
+    picks = pd.concat([synth[synth["label"] == lbl].head(1) for lbl in ("scam", "spam", "legitimate")])
+    synth_out = explain_rows(picks, vectorizer, logreg, PUBLIC_FIGURES_DIR, "Synthetic example")
+    with open(os.path.join(PUBLIC_FIGURES_DIR, "sample_explanations_synthetic.json"), "w", encoding="utf-8") as f:
+        json.dump(synth_out, f, indent=2, ensure_ascii=False)
+
+    plot_top_features(vectorizer, logreg, os.path.join(PUBLIC_FIGURES_DIR, "top_scam_features.png"))
+
+    print(f"\nReal-message explanations and figures (private): {os.path.normpath(PROCESSED_DIR)}")
+    print(f"Synthetic examples and the top-words chart: {os.path.normpath(PUBLIC_FIGURES_DIR)}")
 
 
 if __name__ == "__main__":

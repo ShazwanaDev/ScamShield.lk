@@ -197,6 +197,24 @@ which is well within their ± range.
 - **Confidence intervals are wide** (about ±0.1 F1), because there are only 113 real test
   messages. Present them alongside every real-world number.
 
+### Explanation figures
+
+`python src/explainability_lime.py` writes two sets of figures:
+
+- `ml/models/figures/` (tracked, safe for the report):
+  - `top_scam_features.png`: the 15 words the logistic regression weighs most towards scam
+    and the 15 most away from it.
+  - One LIME chart per label for a synthetic test message, with the explanations in
+    `sample_explanations_synthetic.json`.
+- `ml/data/processed/figures/` (gitignored): LIME charts for five real scam messages. They
+  show words from real messages, so check each one before putting it in the report.
+
+The top-words chart shows a limitation of the synthetic data. The strongest "not scam" word is
+"2026", and "000" is one of the strongest scam words. Both come from how the templates were
+written (dates in genuine notices, round amounts in scams), not from how scams are worded. A
+model trained only on synthetic data picks up such template habits, which is part of why it
+over-flags genuine real messages.
+
 ## Known limitations
 
 - **The real set is small** (113 verbatim messages). Every real-world figure has a wide
