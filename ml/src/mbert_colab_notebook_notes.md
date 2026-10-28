@@ -3,6 +3,11 @@
 Fine-tuning mBERT on a CPU is impractically slow — do this step on Colab with a
 free T4 GPU (Runtime → Change runtime type → GPU).
 
+The ready-to-run notebook is `ml/notebooks/mbert_colab.ipynb`. Open it in Colab (File →
+Upload notebook), upload `ml/data/processed/dataset.csv` when asked, and run the cells in
+order. It downloads `mbert_results.json` at the end; put that in `ml/models/`. The steps
+below explain what the notebook does.
+
 ## Steps
 
 1. Upload `ml/data/processed/dataset.csv` (written by `preprocessing.py`) to your Colab
