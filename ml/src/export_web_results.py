@@ -46,6 +46,25 @@ def real_metrics(m):
     }
 
 
+def mbert_entry():
+    """mBERT runs on Colab (ml/notebooks/mbert_colab.ipynb); its results arrive as mbert_results.json."""
+    entry = {"id": "mbert", "name": "mBERT (multilingual)", "type": "Transformer", "status": "not_trained"}
+    path = os.path.join(MODELS_DIR, "mbert_results.json")
+    if not os.path.exists(path):
+        return entry
+    with open(path) as f:
+        mbert = json.load(f)
+    real = mbert["A_synthetic_to_real_scam_vs_not"]
+    synth = mbert["C_synthetic_test_3way"]
+    entry.update({
+        "status": "compared",  # trained and scored, but not the model the app serves
+        "real": real_metrics(real),
+        "synthetic": {"macroF1": rounded(synth["macro_f1"]), "accuracy": rounded(synth["accuracy"])},
+        "realLabelVsPredicted": real["real_label_vs_predicted"],
+    })
+    return entry
+
+
 def main():
     with open(os.path.join(MODELS_DIR, "final_evaluation_results.json")) as f:
         results = json.load(f)
@@ -72,8 +91,7 @@ def main():
         if key in real_a and "real_label_vs_predicted" in real_a[key]:
             entry["realLabelVsPredicted"] = real_a[key]["real_label_vs_predicted"]
         models.append(entry)
-    models.append({"id": "mbert", "name": "mBERT (multilingual)", "type": "Transformer",
-                   "status": "not_trained"})
+    models.append(mbert_entry())
 
     syn = df[df["source_type"] == "synthetic_augmentation"]
     counts = df["split"].value_counts()

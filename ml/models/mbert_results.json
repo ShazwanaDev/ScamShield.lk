@@ -1,0 +1,76 @@
+{
+  "model": "mbert",
+  "base_model": "bert-base-multilingual-cased",
+  "versions": {
+    "transformers": "5.21.0",
+    "torch": "2.11.0+cu130"
+  },
+  "A_synthetic_to_real_scam_vs_not": {
+    "n": 113,
+    "n_scam": 45,
+    "accuracy": 0.504424778761062,
+    "precision": 0.4246575342465753,
+    "recall": 0.6888888888888889,
+    "f1": 0.5254237288135594,
+    "auc_roc": 0.5598039215686273,
+    "ci95": {
+      "accuracy": [
+        0.415929203539823,
+        0.5929203539823009
+      ],
+      "precision": [
+        0.3188060731538992,
+        0.5362635869565218
+      ],
+      "recall": [
+        0.5510204081632653,
+        0.813953488372093
+      ],
+      "f1": [
+        0.4106406033287101,
+        0.6285829493087557
+      ],
+      "auc_roc": [
+        0.44735251117991054,
+        0.6688809523809525
+      ]
+    },
+    "real_label_vs_predicted": {
+      "legitimate": {
+        "legitimate": 6,
+        "scam": 42,
+        "spam": 20
+      },
+      "scam": {
+        "legitimate": 3,
+        "scam": 31,
+        "spam": 11
+      }
+    }
+  },
+  "C_synthetic_test_3way": {
+    "macro_f1": 0.8870943071723355,
+    "accuracy": 0.8963133640552995,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.9912280701754386,
+        "recall": 0.7243589743589743,
+        "f1-score": 0.837037037037037,
+        "support": 156.0
+      },
+      "scam": {
+        "precision": 0.9222797927461139,
+        "recall": 0.994413407821229,
+        "f1-score": 0.956989247311828,
+        "support": 179.0
+      },
+      "spam": {
+        "precision": 0.7716535433070866,
+        "recall": 0.98989898989899,
+        "f1-score": 0.8672566371681416,
+        "support": 99.0
+      }
+    }
+  },
+  "reconstructed_scam_detection_rate": 1.0
+}

@@ -160,6 +160,11 @@ which is well within their ± range.
 | Keyword baseline | 0.80 [0.00–1.00] | 0.09 [0.00–0.19] | 0.16 [0.00–0.31] | 0.54 [0.49–0.59] |
 | TF-IDF + LogReg | 0.56 [0.44–0.68] | 0.84 [0.74–0.94] | 0.67 [0.57–0.77] | 0.83 [0.75–0.90] |
 | TF-IDF + SVM | 0.55 [0.44–0.68] | 0.82 [0.70–0.93] | 0.66 [0.55–0.76] | 0.79 [0.71–0.87] |
+| mBERT | 0.42 [0.32–0.54] | 0.69 [0.55–0.81] | 0.53 [0.41–0.63] | 0.56 [0.45–0.67] |
+
+The mBERT figures come from `models/mbert_results.json`: one Colab run of
+`ml/notebooks/mbert_colab.ipynb` (transformers 5.21.0, torch 2.11.0) on the same splits and with
+the same scoring. Experiment B was not run for mBERT.
 
 **B. Synthetic + real training, grouped 5×5 CV on real messages (mean ± std):**
 
@@ -174,12 +179,13 @@ which is well within their ± range.
 |---|---|---|---|---|
 | TF-IDF + LogReg | 0.79 | 0.83 | 0.72 | 0.78 |
 | TF-IDF + SVM | 0.78 | 0.85 | 0.78 | 0.81 |
+| mBERT | 0.84 | 0.96 | 0.87 | 0.89 |
 
 - The keyword baseline scores scam F1 0.40 on this split.
 - Grouped 5-fold CV on the synthetic training split gives macro-F1 0.69 ± 0.15 (LogReg) and
   0.70 ± 0.13 (SVM). The large spread shows how much performance depends on which templates a
   model has seen.
-- All 12 reconstructed scams are detected by both models.
+- All 12 reconstructed scams are detected by all three trained models.
 
 ### What these results mean
 
@@ -194,6 +200,19 @@ which is well within their ± range.
     like. This is the **synthetic-to-real gap**, and it is worth discussing in the report.
 - **A small amount of real data helps a lot.** Adding about 90 real messages to training lifts
   F1 from 0.67 to about 0.82–0.85 and AUC to about 0.95.
+- **mBERT does not beat TF-IDF here.** It has the best synthetic test score (macro-F1 0.89 vs
+  0.78–0.81) but the weakest real-message results of the trained models:
+  - F1 0.53 [0.41–0.63] against 0.67 [0.57–0.77] for logistic regression;
+  - 42 of 68 genuine messages flagged as scam, against 30;
+  - an AUC of 0.56 [0.45–0.67] whose range includes 0.5, so on real messages its scam scores
+    rank messages no better than chance can be ruled out.
+
+  The F1 ranges overlap a little, so F1 alone does not settle it. The AUC ranges do not overlap
+  (0.75–0.90 against 0.45–0.67), so TF-IDF ranks real scams clearly better. The likely cause is
+  that the larger model fitted the synthetic templates more closely, which is the overfitting risk
+  the plan expected with so little real data. For the research question, this is the answer: in
+  this low-resource setting, mBERT gave no measurable improvement over TF-IDF on real messages.
+  It was a single run, so say so in the report.
 - **Confidence intervals are wide** (about ±0.1 F1), because there are only 113 real test
   messages. Present them alongside every real-world number.
 

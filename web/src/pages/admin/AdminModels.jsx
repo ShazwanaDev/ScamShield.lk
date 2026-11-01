@@ -7,6 +7,7 @@ const STATUS = {
   serving: { label: "In use", tone: "legit" },
   candidate: { label: "Candidate", tone: "primary" },
   baseline: { label: "Baseline", tone: "neutral" },
+  compared: { label: "Compared, not used", tone: "info" },
   not_trained: { label: "Not trained yet", tone: "spam" },
 };
 
@@ -50,7 +51,8 @@ export default function AdminModels() {
       <Alert tone="info" title="Where these numbers come from">
         Real results are scam vs not-scam on {d.realTest} real messages the models never saw in training. Synthetic results
         are all three labels on {d.syntheticTest} messages from templates kept out of training. The backend serves TF-IDF +
-        Logistic Regression; switching models means retraining in <code>ml/</code>.
+        Logistic Regression; switching models means retraining in <code>ml/</code>. mBERT was trained on Colab with
+        the same splits; its results come from <code>ml/models/mbert_results.json</code>.
       </Alert>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -89,7 +91,8 @@ export default function AdminModels() {
           />
           <p className="mt-2 text-xs text-muted-foreground">
             Summary: both TF-IDF models catch far more real scams than the keyword list, but flag many genuine messages too
-            (precision about {fmt(trained.find((m) => m.id === "logreg")?.real.precision)}).
+            (precision about {fmt(trained.find((m) => m.id === "logreg")?.real.precision)}). mBERT catches fewer real scams
+            and flags more genuine messages than either, despite the best synthetic-test score.
           </p>
         </CardContent>
       </Card>

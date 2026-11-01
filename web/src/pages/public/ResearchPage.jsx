@@ -13,6 +13,7 @@ const STATUS = {
   serving: { label: "In use", tone: "legit" },
   candidate: { label: "Candidate", tone: "primary" },
   baseline: { label: "Baseline", tone: "neutral" },
+  compared: { label: "Compared, not used", tone: "info" },
   not_trained: { label: "Not trained yet", tone: "spam" },
 };
 
@@ -21,6 +22,7 @@ const fmt = (x) => (x == null ? "—" : x.toFixed(2));
 export default function ResearchPage() {
   const d = RESULTS.dataset;
   const cv = RESULTS.models.filter((m) => m.realCv).map((m) => m.realCv.f1Mean);
+  const mbert = RESULTS.models.find((m) => m.id === "mbert");
 
   return (
     <div>
@@ -91,7 +93,10 @@ export default function ResearchPage() {
             The models were trained on {d.syntheticTrain.toLocaleString()} AI-assisted synthetic messages built from{" "}
             {d.syntheticTemplates} templates, and no real messages. With only {d.realTest} real test messages the results
             are uncertain, so each F1 score is shown with its 95% range. When some real messages were added to training,
-            F1 rose to about {cv.map(fmt).join("–")} in cross-validation. Measured on {RESULTS.evaluatedOn}.
+            F1 rose to about {cv.map(fmt).join("–")} in cross-validation. mBERT reached the highest score on the synthetic
+            test set{mbert?.synthetic ? ` (macro-F1 ${fmt(mbert.synthetic.macroF1)})` : ""} but the lowest of the trained models on
+            real messages, a sign that it learned the synthetic templates rather than how real scams read. Measured on
+            {RESULTS.evaluatedOn}.
           </p>
         </div>
 
@@ -101,7 +106,7 @@ export default function ResearchPage() {
             {[
               "Text is cleaned and normalised (Unicode NFC, link and phone-number masking) with a tokenizer that keeps Sinhala and Tamil words whole.",
               "A TF-IDF representation feeds Logistic Regression and SVM models, cross-validated with splits grouped by message template.",
-              "Multilingual BERT (mBERT) is planned as a stronger comparison for the code-mixed setting. It has not been trained yet.",
+              "Multilingual BERT (mBERT) was fine-tuned on the same data as a stronger comparison. It scored best on the synthetic test set but transferred worse to real messages than TF-IDF.",
               "TF-IDF feature weights explain each live prediction in the app; LIME is used for the research analysis.",
               "A strict data-integrity rule separates real, reconstructed, and synthetic-augmentation examples. The main models never train on real messages, which are kept for testing.",
             ].map((t, i) => (

@@ -111,7 +111,34 @@
       "id": "mbert",
       "name": "mBERT (multilingual)",
       "type": "Transformer",
-      "status": "not_trained"
+      "status": "compared",
+      "real": {
+        "precision": 0.425,
+        "recall": 0.689,
+        "f1": 0.525,
+        "accuracy": 0.504,
+        "auc": 0.56,
+        "f1Ci95": [
+          0.411,
+          0.629
+        ]
+      },
+      "synthetic": {
+        "macroF1": 0.887,
+        "accuracy": 0.896
+      },
+      "realLabelVsPredicted": {
+        "legitimate": {
+          "legitimate": 6,
+          "scam": 42,
+          "spam": 20
+        },
+        "scam": {
+          "legitimate": 3,
+          "scam": 31,
+          "spam": 11
+        }
+      }
     }
   ],
   "perLanguage": [

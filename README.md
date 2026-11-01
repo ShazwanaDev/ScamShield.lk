@@ -151,7 +151,7 @@ and the primary models never train on real messages.
 - [ ] Grow real dataset toward 500–1000 messages
 - [ ] Fix the 3 known diagram issues above
 - [x] Train + evaluate TF-IDF/LogReg/SVM baseline (results in `ml/data/DATASET_README.md`, "Latest results")
-- [ ] Fine-tune mBERT on Colab, compare metrics
+- [x] Fine-tune mBERT on Colab, compare metrics (results in `ml/data/DATASET_README.md`)
 - [ ] LIME explainability demo
 - [ ] Flutter + React + Flask integrated demo
 - [ ] Deploy to Railway for the live demo period
