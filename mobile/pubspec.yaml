@@ -25,7 +25,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   # The bundled offline TFLite model (assets/models/scamshield_offline.tflite) hasn't been
-  # exported yet (see ml/src, docs/tflite_export_notes.md) — OfflineModelService is a stub
+  # exported yet — OfflineModelService is a stub
   # that doesn't load it. Re-add this assets block once the file actually exists on disk;
   # declaring a path Flutter can't find breaks every build.
   # assets:

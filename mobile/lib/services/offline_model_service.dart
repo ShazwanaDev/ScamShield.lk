@@ -9,7 +9,7 @@ import '../models/classification_result.dart';
 /// version (0.12.1+) here once the quantized model has been exported by
 /// `ml/src/tfidf_baseline.py` and converted. The conversion step (TF-IDF
 /// vocabulary + weights -> a small dense TFLite model) needs its own export
-/// script; see docs/tflite_export_notes.md.
+/// script, which hasn't been written yet.
 class OfflineModelService {
   static bool _warmedUp = false;
 

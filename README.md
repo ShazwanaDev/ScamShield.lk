@@ -32,7 +32,6 @@ scamshield-lk/
 │   └── models/             # DB models (SQLAlchemy)
 ├── mobile/                 # Flutter app (Check/Report/History/Stats tabs)
 ├── web/                    # React web app (Classify/Report/Dashboard/Admin/About)
-├── docs/                   # architecture notes, ERD notes, diagram fix notes
 ├── docker-compose.yml      # local Postgres + Redis
 └── README.md               # this file
 ```
@@ -172,8 +171,6 @@ The three diagram problems found earlier are fixed in the draw.io sources and ex
 - Model training flowchart: steps now run Collect → Label → Labelled dataset → Preprocess onwards.
 - Community reporting flowchart: has the admin "Approved?" approve/reject branch.
 - Architecture diagram: has the Redis node next to PostgreSQL.
-
-`docs/diagram_fixes_needed.md` records each problem and how it was fixed.
 
 ## 6. Deliverables checklist
 

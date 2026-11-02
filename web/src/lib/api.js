@@ -36,7 +36,7 @@ async function request(path, { headers, ...options } = {}) {
 
 /** Categories used for community reports — mirrors ml/data/DATASET_README.md's taxonomy.
  * There is no GET /api/categories endpoint yet, so this list is maintained here until
- * one exists (see docs/wireframe_brief.md §10). `value` is sent as the `category` field;
+ * one exists. `value` is sent as the `category` field;
  * the backend matches it by name and silently ignores anything that doesn't match a row
  * in scam_categories, so an unmatched value never blocks submission. */
 export const REPORT_CATEGORIES = [

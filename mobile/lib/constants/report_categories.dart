@@ -1,5 +1,5 @@
 /// Mirrors web/src/lib/api.js REPORT_CATEGORIES — kept in sync manually until a
-/// GET /api/categories endpoint exists (see docs/wireframe_brief.md §10).
+/// GET /api/categories endpoint exists.
 class ReportCategory {
   final String value;
   final String label;
