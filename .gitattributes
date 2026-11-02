@@ -1,0 +1,4 @@
+# Shell scripts run inside Linux containers. A Windows checkout with
+# core.autocrlf would otherwise turn their line endings into CRLF, and the
+# container then fails to start with "/bin/sh^M: not found".
+*.sh text eol=lf
