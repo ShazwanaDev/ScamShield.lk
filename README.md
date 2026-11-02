@@ -118,9 +118,37 @@ cd mobile
 flutter pub get
 flutter run --dart-define=SCAMSHIELD_API_URL=http://10.0.2.2:5000/api
 ```
-Bottom tabs: Check · Report · History · Stats. Falls back to a basic on-device keyword
-check (`OfflineModelService`, not the real TFLite model yet) when the API is unreachable —
-see §6 open issues.
+Bottom tabs: Home · History · Report · Dashboard. Falls back to a basic on-device keyword
+check (`OfflineModelService`, not the real TFLite model yet) when the API is unreachable.
+Without an Android emulator, `flutter build web --dart-define=SCAMSHIELD_API_URL=http://localhost:5000/api`
+builds the same app for the browser.
+
+### 3.8 Tests
+From the repository root, with the backend and ML packages installed:
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
+The tests cover:
+- admin sign-in and tokens;
+- report checks, the moderation queue and the public stats;
+- the prediction API;
+- text cleaning and the scoring helpers.
+
+Each test uses its own throwaway SQLite database. Tests that need the trained model (`ml/models/*.pkl`)
+or the private dataset skip themselves when those files are missing. With both present, one test
+checks that the API gives the same label as the evaluated model for every real test message.
+The mobile app has its own checks: `flutter analyze` and `flutter test` in `mobile/`.
+
+### 3.9 Whole system with Docker
+With Docker Desktop running, and `SECRET_KEY` and `ADMIN_PASSWORD` set in `.env`:
+```bash
+docker compose up -d --build
+```
+This starts PostgreSQL, Redis and the backend on http://localhost:5000. On start-up the backend
+runs the migrations, seeds the categories and loads the model from `ml/models`. Then run the web
+app (§3.6) as usual. `docker compose down` stops everything, and `docker compose down -v` also
+deletes the database.
 
 ## 4. Dataset status (as of 25 Oct 2026)
 
