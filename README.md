@@ -166,18 +166,20 @@ results and limitations.
 `reconstructed` / `synthetic_augmentation`. Synthetic rows are never reported as collected data,
 and the primary models never train on real messages.
 
-## 5. Known issues to fix before interim report submission
+## 5. Diagram fixes (done)
 
-- Model training flowchart: fix reversed order ("Labelled SMS Dataset" currently
-  appears before "Collect & Label Dataset" — swap them).
-- Community reporting flowchart: add the missing admin approve/reject decision branch.
-- Architecture diagram: add Redis (currently missing despite being in the stack).
+The three diagram problems found earlier are fixed in the draw.io sources and exported to PNG:
+- Model training flowchart: steps now run Collect → Label → Labelled dataset → Preprocess onwards.
+- Community reporting flowchart: has the admin "Approved?" approve/reject branch.
+- Architecture diagram: has the Redis node next to PostgreSQL.
+
+`docs/diagram_fixes_needed.md` records each problem and how it was fixed.
 
 ## 6. Deliverables checklist
 
 - [ ] Interim report (due end of July) — use `Interim_Report_Template.docx`
 - [ ] Grow real dataset toward 500–1000 messages
-- [ ] Fix the 3 known diagram issues above
+- [x] Fix the 3 known diagram issues above
 - [x] Train + evaluate TF-IDF/LogReg/SVM baseline (results in `ml/data/DATASET_README.md`, "Latest results")
 - [x] Fine-tune mBERT on Colab, compare metrics (results in `ml/data/DATASET_README.md`)
 - [ ] LIME explainability demo
