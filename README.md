@@ -99,6 +99,18 @@ flask --app app run --debug
 API will be live at `http://localhost:5000`. With Docker Compose, put `SECRET_KEY` and
 `ADMIN_PASSWORD` in a `.env` file next to `docker-compose.yml` (see `.env.example`).
 
+**Demo community reports (optional).** A fresh database only has the scam categories, so the
+dashboards' community stats (`GET /api/stats`) start empty. For a presentation, add 44 approved
+sample reports (32 in the last 7 days) and remove them again afterwards:
+```bash
+cd backend
+python -m scripts.seed_demo_reports            # needs DATABASE_URL, as above
+python -m scripts.seed_demo_reports --remove   # deletes exactly those rows
+```
+Inside Docker, rebuild once so the image has the script (`docker compose up -d --build`), then
+run `docker compose exec backend python -m scripts.seed_demo_reports`.
+They are community reports only and never enter the training data.
+
 ### 3.6 Web frontend
 ```bash
 cd web
@@ -111,6 +123,11 @@ app. Admin sign-in at `/admin/login` is checked by the backend: the passphrase i
 backend's `ADMIN_PASSWORD`, and the moderation API refuses requests without the signed
 session token it hands out. User accounts in `/app` are still a frontend-only mock.
 
+**Demo account (optional).** Set `VITE_DEMO_EMAIL` and `VITE_DEMO_NAME` in your own
+`web/.env`. When that email signs in, its history and reports are filled once with sample
+checks (`src/data/demoAccount.js`), so the dashboards have content for a presentation. The
+mock sign-in never stores or checks the password. Restart `npm run dev` after editing `.env`.
+
 ### 3.7 Mobile app
 ```bash
 cd mobile
@@ -121,6 +138,11 @@ Bottom tabs: Home · History · Report · Dashboard. Falls back to a basic on-de
 check (`OfflineModelService`, not the real TFLite model yet) when the API is unreachable.
 Without an Android emulator, `flutter build web --dart-define=SCAMSHIELD_API_URL=http://localhost:5000/api`
 builds the same app for the browser.
+
+**Demo account (optional).** Copy `dart_defines.example.json` to `dart_defines.local.json`
+(gitignored), fill in `DEMO_EMAIL` and `DEMO_NAME`, and add
+`--dart-define-from-file=dart_defines.local.json` to `flutter run` or `flutter build`. When that
+email signs in, the device history is filled once with sample checks (`lib/services/demo_data.dart`).
 
 ### 3.8 Tests
 From the repository root, with the backend and ML packages installed:
