@@ -71,7 +71,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                 children: [
                   _FilterChip(
                     label: 'All',
@@ -86,11 +88,18 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
+                    label: 'Spam',
+                    selected: currentFilter == HistoryFilter.spam,
+                    onTap: () => ref.read(historyFilterProvider.notifier).state = HistoryFilter.spam,
+                  ),
+                  const SizedBox(width: 8),
+                  _FilterChip(
                     label: 'Legitimate',
                     selected: currentFilter == HistoryFilter.legitimate,
                     onTap: () => ref.read(historyFilterProvider.notifier).state = HistoryFilter.legitimate,
                   ),
                 ],
+              ),
               ),
             ),
             const SizedBox(height: 8),

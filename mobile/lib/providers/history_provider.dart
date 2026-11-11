@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/history_entry.dart';
 import '../services/history_service.dart';
+import 'auth_provider.dart';
 
-enum HistoryFilter { all, scam, legitimate }
+enum HistoryFilter { all, scam, spam, legitimate }
 
 class HistoryNotifier extends StateNotifier<AsyncValue<List<HistoryEntry>>> {
   HistoryNotifier() : super(const AsyncValue.loading()) {
@@ -39,9 +40,11 @@ class HistoryNotifier extends StateNotifier<AsyncValue<List<HistoryEntry>>> {
   }
 }
 
-final historyProvider = StateNotifierProvider<HistoryNotifier, AsyncValue<List<HistoryEntry>>>(
-  (ref) => HistoryNotifier(),
-);
+final historyProvider = StateNotifierProvider<HistoryNotifier, AsyncValue<List<HistoryEntry>>>((ref) {
+  // Reload when a different account signs in (e.g. the demo account seeds its history at login).
+  ref.watch(authProvider.select((s) => s.user?.email));
+  return HistoryNotifier();
+});
 
 final historySearchProvider = StateProvider<String>((ref) => '');
 final historyFilterProvider = StateProvider<HistoryFilter>((ref) => HistoryFilter.all);
@@ -57,6 +60,7 @@ final filteredHistoryProvider = Provider<AsyncValue<List<HistoryEntry>>>((ref) {
       final matchesFilter = switch (filter) {
         HistoryFilter.all => true,
         HistoryFilter.scam => e.isScam,
+        HistoryFilter.spam => e.label == 'spam',
         HistoryFilter.legitimate => e.label == 'legitimate',
       };
       final matchesQuery = query.isEmpty || e.message.toLowerCase().contains(query);

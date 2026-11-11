@@ -20,7 +20,11 @@ class ApiService {
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'message': message}),
           )
-          .timeout(const Duration(seconds: 3));
+          // Generous on purpose: a refused connection or no network fails at once and
+          // falls back immediately, so this only applies when the server is reachable
+          // but slow. The first /predict after a backend start loads the model files
+          // (seconds on a cold Docker bind mount); 3s used to push that to offline.
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

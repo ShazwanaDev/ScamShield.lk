@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../providers/connectivity_provider.dart';
+import '../../providers/my_reports_provider.dart';
 import '../../providers/report_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_text_area.dart';
@@ -21,6 +23,23 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   String? _category;
 
   @override
+  void initState() {
+    super.initState();
+    // Opened from a result's "Report this": start with that message.
+    _applyDraft(ref.read(reportDraftProvider));
+  }
+
+  void _applyDraft(String? draft) {
+    if (draft == null || draft.isEmpty) return;
+    _controller.text = draft;
+    Future.microtask(() {
+      if (!mounted) return;
+      ref.read(reportDraftProvider.notifier).state = null;
+      ref.read(reportProvider.notifier).reset();
+    });
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -31,9 +50,21 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
     final reportState = ref.watch(reportProvider);
     final isOnline = ref.watch(connectivityProvider).valueOrNull ?? true;
     final submitting = reportState.status == ReportStatus.submitting;
+    // The tab stays alive between visits, so also pick up drafts sent later.
+    ref.listen<String?>(reportDraftProvider, (_, next) => _applyDraft(next));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Report a scam')),
+      appBar: AppBar(
+        title: const Text('Report a scam'),
+        actions: [
+          TextButton.icon(
+            onPressed: () => context.push('/my-reports'),
+            icon: const Icon(Icons.inventory_2_outlined, size: 18),
+            label: const Text('My reports'),
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -67,7 +98,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  "Thanks — a moderator will review this before it's counted toward public stats.",
+                  "Thanks. A moderator will review this before it's counted toward public stats.",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppColors.onSurfaceMuted, fontSize: 13),
                 ),
@@ -80,7 +111,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       case ReportStatus.queued:
         return EmptyState(
           icon: Icons.cloud_upload_outlined,
-          title: 'Saved — will submit when back online',
+          title: 'Saved. It will submit when you are back online',
           description: "You're offline right now, so this report is queued on your device and will send "
               'automatically once you reconnect.',
           action: _reportAnotherButton(),
@@ -108,7 +139,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "You're offline — this will be queued and submitted when back online.",
+                        "You're offline. This will be queued and submitted when you are back online.",
                         style: TextStyle(color: AppColors.warning, fontSize: 12.5),
                       ),
                     ),

@@ -63,12 +63,12 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    isGuest ? 'Guest' : (user?.displayName ?? user?.email ?? '—'),
+                    isGuest ? 'Guest' : (user?.displayName ?? user?.email ?? 'Account'),
                     style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.onSurface),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isGuest ? 'Local-only mode — not signed in' : (user?.email ?? ''),
+                    isGuest ? 'Local only mode, not signed in' : (user?.email ?? ''),
                     style: const TextStyle(fontSize: 13, color: AppColors.onSurfaceMuted),
                   ),
                 ],
@@ -106,11 +106,37 @@ class ProfileScreen extends ConsumerWidget {
               ),
             const SizedBox(height: 16),
             Card(
-              child: ListTile(
-                leading: const Icon(Icons.settings_outlined),
-                title: const Text('Settings'),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => context.push('/settings'),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.flag_outlined),
+                    title: const Text('My reports'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/my-reports'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.category_outlined),
+                    title: const Text('Scam types guide'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/scam-types'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.help_outline_rounded),
+                    title: const Text('Help and FAQ'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/help'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.settings_outlined),
+                    title: const Text('Settings'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/settings'),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),

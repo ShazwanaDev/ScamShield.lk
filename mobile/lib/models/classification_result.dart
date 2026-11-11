@@ -15,6 +15,10 @@ class ClassificationResult {
 
   bool get isScam => label == 'scam';
 
-  List<String> get triggerWordStrings =>
-      triggerWords.map((w) => w['word'].toString()).toList();
+  /// Words that pushed the result toward scam. The API also returns words
+  /// with a negative weight (pointing toward legitimate); those aren't risky.
+  List<String> get triggerWordStrings => [
+        for (final w in triggerWords)
+          if (((w['weight'] as num?) ?? 1) > 0) w['word'].toString(),
+      ];
 }

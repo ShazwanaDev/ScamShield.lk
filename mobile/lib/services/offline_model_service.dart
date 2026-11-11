@@ -13,6 +13,12 @@ import '../models/classification_result.dart';
 class OfflineModelService {
   static bool _warmedUp = false;
 
+  // Pressure, reward and credential words common in Sri Lankan scam SMS.
+  static const _keywords = [
+    'otp', 'pin', 'click', 'won', 'winner', 'prize', 'urgent', 'immediately', 'suspend', 'blocked',
+    'verify', 'kyc', 'reload', 'fee', 'claim', 'link', 'fine', 'arrest', 'customs', 'lottery',
+  ];
+
   /// Called once from the splash screen so there's a real (if currently
   /// trivial) async step to show a "loading offline model" status against.
   /// Once tflite_flutter is wired up, load and cache the Interpreter here.
@@ -26,15 +32,18 @@ class OfflineModelService {
     // TODO: replace with real tflite_flutter Interpreter.run() call.
     // Placeholder keeps the app usable offline during development.
     final lower = message.toLowerCase();
-    final looksScam = lower.contains('otp') ||
-        lower.contains('click') ||
-        lower.contains('won') ||
-        lower.contains('urgent');
+    final hits = [
+      for (final k in _keywords)
+        if (lower.contains(k)) k,
+    ];
+    final looksScam = hits.isNotEmpty;
 
     return ClassificationResult(
       label: looksScam ? 'scam' : 'legitimate',
-      confidence: looksScam ? 0.7 : 0.6,
-      triggerWords: const [],
+      confidence: looksScam ? (0.62 + hits.length * 0.06).clamp(0.62, 0.9).toDouble() : 0.6,
+      triggerWords: [
+        for (final k in hits.take(5)) {'word': k, 'weight': 0.3},
+      ],
       isOffline: true,
     );
   }

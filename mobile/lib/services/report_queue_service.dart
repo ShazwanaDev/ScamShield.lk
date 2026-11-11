@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pending_report.dart';
 import 'api_service.dart';
+import 'my_reports_service.dart';
 
 /// Holds community reports submitted while the device has no connectivity
 /// (see providers/connectivity_provider.dart) so they aren't lost — they're
@@ -35,6 +36,7 @@ class ReportQueueService {
     for (final report in pending) {
       try {
         await ApiService.submitReport(report.message, report.category);
+        await MyReportsService.markSent(report.id);
         flushed++;
       } catch (_) {
         stillPending.add(report);

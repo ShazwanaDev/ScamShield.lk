@@ -15,6 +15,11 @@ import '../screens/history/history_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/help/help_screen.dart';
+import '../screens/reports/my_report_detail_screen.dart';
+import '../screens/reports/my_reports_screen.dart';
+import '../screens/scam_types/scam_type_detail_screen.dart';
+import '../screens/scam_types/scam_types_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/quiz/quiz_screen.dart';
 import '../screens/report/report_screen.dart';
@@ -80,6 +85,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ArticleDetailScreen(slug: state.pathParameters['slug']!),
       ),
       GoRoute(path: '/quiz', builder: (context, state) => const QuizScreen()),
+      GoRoute(path: '/help', builder: (context, state) => const HelpScreen()),
+      GoRoute(path: '/scam-types', builder: (context, state) => const ScamTypesScreen()),
+      GoRoute(
+        path: '/scam-types/:slug',
+        builder: (context, state) => ScamTypeDetailScreen(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(path: '/my-reports', builder: (context, state) => const MyReportsScreen()),
+      GoRoute(
+        path: '/my-reports/:id',
+        builder: (context, state) => MyReportDetailScreen(reportId: state.pathParameters['id']!),
+      ),
       GoRoute(
         path: '/history/:id',
         builder: (context, state) => HistoryDetailScreen(entryId: state.pathParameters['id']!),

@@ -23,8 +23,11 @@ class HistoryEntry {
 
   bool get isScam => label == 'scam';
 
-  List<String> get triggerWordStrings =>
-      triggerWords.map((w) => w['word'].toString()).toList();
+  /// Words that pushed the result toward scam (negative weights point toward legitimate).
+  List<String> get triggerWordStrings => [
+        for (final w in triggerWords)
+          if (((w['weight'] as num?) ?? 1) > 0) w['word'].toString(),
+      ];
 
   factory HistoryEntry.fromResult(String message, ClassificationResult result) {
     return HistoryEntry(

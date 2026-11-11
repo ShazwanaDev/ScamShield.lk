@@ -70,7 +70,7 @@ class AlertDetailScreen extends StatelessWidget {
             ...alert.advice.map((a) => _CheckItem(a)),
             const SizedBox(height: 24),
             OutlinedButton.icon(
-              onPressed: () => context.push('/report'),
+              onPressed: () => context.go('/report'),
               icon: const Icon(Icons.flag_outlined, size: 18),
               label: const Text('Report a scam like this'),
               style: OutlinedButton.styleFrom(
