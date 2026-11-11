@@ -16,7 +16,7 @@ export default function ContactPage() {
   const submit = (e) => {
     e.preventDefault();
     setSent(true);
-    toast({ tone: "success", title: "Message sent", description: "Thanks — we'll get back to you soon." });
+    toast({ tone: "success", title: "Message sent", description: "Thanks. We'll get back to you soon." });
   };
 
   return (
@@ -36,7 +36,7 @@ export default function ContactPage() {
                   <Icons.IconCheckCircle className="h-7 w-7" />
                 </span>
                 <h3 className="mt-4 text-section-title text-foreground">Message sent</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">Thanks for reaching out — we'll reply by email soon.</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">Thanks for reaching out. We'll reply by email soon.</p>
                 <Button variant="secondary" className="mt-5" onClick={() => setSent(false)}>
                   Send another
                 </Button>

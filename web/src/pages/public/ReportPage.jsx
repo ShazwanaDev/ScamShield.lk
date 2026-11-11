@@ -51,7 +51,7 @@ export default function ReportPage() {
               {queued ? <Icons.IconClock className="h-8 w-8" /> : <Icons.IconCheckCircle className="h-8 w-8" />}
             </span>
             <h2 className="mt-5 text-2xl font-extrabold text-foreground">
-              {queued ? "Saved — will submit when online" : "Report submitted"}
+              {queued ? "Saved. Will submit when online" : "Report submitted"}
             </h2>
             <p className="mt-2 text-foreground-secondary">
               {queued
@@ -77,7 +77,7 @@ export default function ReportPage() {
       <ContentHero
         eyebrow="Community reporting"
         title="Report a scam"
-        description="Seen a scam SMS — even one that didn't come to you directly? Share it so a moderator can review it and warn others."
+        description="Seen a scam SMS, even one that didn't come to you directly? Share it so a moderator can review it and warn others."
         icon={<Icons.IconFlag className="h-3.5 w-3.5" />}
       />
       <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
@@ -96,7 +96,7 @@ export default function ReportPage() {
               </Field>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Category" hint="Optional — helps grouping">
+                <Field label="Category" hint="Optional. Helps grouping">
                   <Select value={category} onChange={(e) => setCategory(e.target.value)}>
                     <option value="">Not sure</option>
                     {REPORT_CATEGORIES.map((c) => (

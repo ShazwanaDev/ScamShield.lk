@@ -56,7 +56,7 @@ export default function ScamTypeDetailPage() {
 
             <Card className={cn("border-l-4 p-6", cat.tone === "spam" ? "border-l-spam" : "border-l-scam")}>
               <h2 className="text-section-title text-foreground">Example message</h2>
-              <p className="mt-1 text-sm text-muted-foreground">A representative example — contact details and links are redacted / safe placeholders.</p>
+              <p className="mt-1 text-sm text-muted-foreground">A representative example. Contact details and links are redacted or replaced with safe placeholders.</p>
               <div className={cn("mt-4 rounded-lg p-4", toneBg)}>
                 <HighlightedMessage
                   text={cat.example.text}

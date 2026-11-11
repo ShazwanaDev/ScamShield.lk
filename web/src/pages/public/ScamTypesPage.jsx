@@ -13,7 +13,7 @@ export default function ScamTypesPage() {
       <ContentHero
         eyebrow="Know the threats"
         title="Scam types in Sri Lanka"
-        description="The scams that circulate most by SMS — how each one works, the red flags, and how to stay safe."
+        description="The scams that circulate most by SMS: how each one works, the red flags, and how to stay safe."
         icon={<Icons.IconShieldAlert className="h-3.5 w-3.5" />}
       />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">

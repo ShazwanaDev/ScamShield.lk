@@ -4,9 +4,9 @@ import * as Icons from "../../components/icons.jsx";
 import { Card, Button, SectionHeading } from "../../ui/index.js";
 
 const FEATURES = [
-  { icon: Icons.IconGlobe, title: "Truly multilingual", text: "English, Sinhala, Tamil, Singlish, Thanglish and code-mixed — the way Sri Lanka actually texts." },
+  { icon: Icons.IconGlobe, title: "Truly multilingual", text: "English, Sinhala, Tamil, Singlish, Thanglish and code-mixed, the way Sri Lanka actually texts." },
   { icon: Icons.IconWand, title: "Explainable results", text: "Highlighted risky phrases and a transparent contribution view, not a mystery score." },
-  { icon: Icons.IconShieldCheck, title: "Three clear verdicts", text: "Scam, spam, or legitimate — each with a confidence score and recommended actions." },
+  { icon: Icons.IconShieldCheck, title: "Three clear verdicts", text: "Scam, spam, or legitimate, each with a confidence score and recommended actions." },
   { icon: Icons.IconWifiOff, title: "Works offline (mobile)", text: "The Android app checks messages with an on-device model even without a connection." },
   { icon: Icons.IconHistory, title: "Your history", text: "Signed-in users keep a private history of every check, with search and filters." },
   { icon: Icons.IconMegaphone, title: "Community alerts", text: "See verified warnings about scams circulating right now, updated by moderators." },
@@ -21,7 +21,7 @@ export default function FeaturesPage() {
       <ContentHero
         eyebrow="Features"
         title="Everything you need to check, learn, and stay protected"
-        description="ScamShield LK is more than a classifier — it's a full scam-awareness toolkit for Sri Lanka."
+        description="ScamShield LK is more than a classifier. It's a full scam awareness toolkit for Sri Lanka."
         icon={<Icons.IconSparkle className="h-3.5 w-3.5" />}
       />
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -51,7 +51,7 @@ export default function FeaturesPage() {
             <Card className="p-6">
               <Icons.IconSmartphone className="h-6 w-6 text-teal" />
               <h3 className="mt-3 text-card-title text-foreground">Android app</h3>
-              <p className="mt-1.5 text-sm text-foreground-secondary">Native, touch-friendly, and works offline with an on-device model — plus history, reports and community alerts.</p>
+              <p className="mt-1.5 text-sm text-foreground-secondary">Native, touch-friendly, and works offline with an on-device model, plus history, reports and community alerts.</p>
               <Button variant="teal" className="mt-4" leftIcon={<Icons.IconSmartphone className="h-4 w-4" />}>
                 Get the app
               </Button>

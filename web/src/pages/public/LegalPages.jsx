@@ -70,7 +70,7 @@ export function PrivacyPage() {
         {
           h: "What you should not submit",
           p: [
-            "Please redact sensitive details before checking or reporting a message — OTPs, passwords, full card numbers, and your NIC. You never need to share these to get a useful result.",
+            "Please redact sensitive details before checking or reporting a message: OTPs, passwords, full card numbers, and your NIC. You never need to share these to get a useful result.",
           ],
         },
         {

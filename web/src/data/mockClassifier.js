@@ -126,7 +126,7 @@ export function classifyLocal(message) {
 function recommendationsFor(verdict, category) {
   if (verdict === "legitimate")
     return [
-      "No strong scam signals — but stay alert.",
+      "No strong scam signals, but stay alert.",
       "If it involves money or codes, verify through an official channel first.",
     ];
   if (verdict === "spam")

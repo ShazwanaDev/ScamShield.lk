@@ -63,7 +63,7 @@ export default function ArticleDetailPage() {
           <Icons.IconShieldCheck className="h-10 w-10 shrink-0 text-teal-light" />
           <div className="flex-1">
             <h3 className="text-card-title text-white">Got a message you're unsure about?</h3>
-            <p className="mt-1 text-sm text-white/70">Check it in seconds — free and private.</p>
+            <p className="mt-1 text-sm text-white/70">Check it in seconds. Free and private.</p>
           </div>
           <Button as={Link} to="/check" variant="teal">Check a message</Button>
         </Card>

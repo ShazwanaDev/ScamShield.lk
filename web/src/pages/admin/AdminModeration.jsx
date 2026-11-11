@@ -36,7 +36,7 @@ function langOf(text) {
 }
 
 function when(iso) {
-  return iso ? new Date(iso).toLocaleString() : "—";
+  return iso ? new Date(iso).toLocaleString() : "Unknown";
 }
 
 function categoryName(slug) {

@@ -13,14 +13,14 @@ export const SCAM_CATEGORIES = [
     tone: "scam",
     tagline: "Tricking you into sharing a one-time password",
     summary:
-      "Scammers pose as your bank, telecom, or a delivery service and pressure you into reading out an OTP or PIN — the exact code that authorises a transaction or account takeover.",
+      "Scammers pose as your bank, telecom, or a delivery service and pressure you into reading out an OTP or PIN, the exact code that authorises a transaction or account takeover.",
     howItWorks: [
       "You receive a call or SMS claiming there is a problem with your account, card, or a delivery.",
       "They create urgency: your account will be blocked, a payment failed, or a parcel is held.",
-      "They ask you to confirm an OTP that was 'just sent' — which actually authorises their transaction.",
+      "They ask you to confirm an OTP that was 'just sent', which actually authorises their transaction.",
     ],
     redFlags: [
-      "Anyone asking you to read out an OTP, PIN, or CVV — no genuine bank or telecom ever will.",
+      "Anyone asking you to read out an OTP, PIN, or CVV. No genuine bank or telecom ever will.",
       "Pressure to act 'within 5 minutes' or the account will be blocked.",
       "A caller who already knows some of your details, to sound legitimate.",
     ],
@@ -29,7 +29,7 @@ export const SCAM_CATEGORIES = [
       text: "Your account will be suspended. Verify now by sharing the 6-digit OTP sent to your phone. Call [PHONE REDACTED] immediately.",
     },
     safetyTips: [
-      "Never share an OTP, PIN, or password — not even with someone claiming to be from your bank.",
+      "Never share an OTP, PIN, or password, not even with someone claiming to be from your bank.",
       "Hang up and call the official number on the back of your card.",
       "Report the number to your bank's fraud line and to ScamShield LK.",
     ],
@@ -44,9 +44,9 @@ export const SCAM_CATEGORIES = [
     summary:
       "A message says you've won a lottery, a phone, or a large cash prize from a telecom or bank promotion. To 'release' the prize you must first pay a fee or share bank details.",
     howItWorks: [
-      "An SMS congratulates you on winning a draw — often citing a real-sounding telecom or bank promotion.",
+      "An SMS congratulates you on winning a draw, often citing a real-sounding telecom or bank promotion.",
       "You're told to pay a small 'processing', 'tax', or 'delivery' fee to claim the prize.",
-      "Once you pay, the prize never arrives and the number goes silent — or asks for more.",
+      "Once you pay, the prize never arrives and the number goes silent or asks for more.",
     ],
     redFlags: [
       "Winning a competition you never entered.",
@@ -71,7 +71,7 @@ export const SCAM_CATEGORIES = [
     tone: "scam",
     tagline: "Fake alerts about your account or a transfer",
     summary:
-      "Messages impersonate your bank warning of a suspicious login, a blocked card, or a KYC update — pushing you to a fake link or hotline that harvests your credentials.",
+      "Messages impersonate your bank warning of a suspicious login, a blocked card, or a KYC update, pushing you to a fake link or hotline that harvests your credentials.",
     howItWorks: [
       "You get an SMS about unusual activity, a KYC/re-verification requirement, or a card block.",
       "It links to a page that looks like your bank's login, or a number that 'verifies' you.",
@@ -87,7 +87,7 @@ export const SCAM_CATEGORIES = [
       text: "Dear Customer, your account KYC is incomplete and will be frozen today. Update now: hxxps://example.invalid/kyc-verify",
     },
     safetyTips: [
-      "Banks never send login or KYC links by SMS — use the official app only.",
+      "Banks never send login or KYC links by SMS. Use the official app only.",
       "Type your bank's address yourself; don't tap links in messages.",
       "Call the number printed on your card if unsure.",
     ],
@@ -100,7 +100,7 @@ export const SCAM_CATEGORIES = [
     tone: "scam",
     tagline: "A parcel is 'held' pending a small fee",
     summary:
-      "With online shopping common, scammers send fake courier notices claiming a parcel is stuck at customs or needs a redelivery fee — linking to a page that steals card details.",
+      "With online shopping common, scammers send fake courier notices claiming a parcel is stuck at customs or needs a redelivery fee, linking to a page that steals card details.",
     howItWorks: [
       "You receive an SMS about a parcel that couldn't be delivered or is held at customs.",
       "A small 'customs charge' or 'redelivery fee' is requested via a link.",
@@ -108,7 +108,7 @@ export const SCAM_CATEGORIES = [
     ],
     redFlags: [
       "Unexpected parcel notices when you're not awaiting delivery.",
-      "Tiny fees (Rs. 50–300) designed to seem harmless.",
+      "Tiny fees (Rs. 50 to 300) designed to seem harmless.",
       "Links to pay, rather than payment on delivery.",
     ],
     example: {
@@ -158,7 +158,7 @@ export const SCAM_CATEGORIES = [
     tone: "scam",
     tagline: "Dream jobs abroad that demand fees first",
     summary:
-      "Fake recruiters advertise high-paying jobs — often overseas — then charge for 'visa processing', 'registration', or 'training' before disappearing.",
+      "Fake recruiters advertise high-paying jobs, often overseas, then charge for 'visa processing', 'registration', or 'training' before disappearing.",
     howItWorks: [
       "You see an SMS or social post about a well-paid job, frequently in the Gulf.",
       "After a quick 'interview', you're asked to pay agency, visa, or medical fees.",
@@ -187,7 +187,7 @@ export const SCAM_CATEGORIES = [
     tone: "scam",
     tagline: "Threats from fake officials",
     summary:
-      "Scammers impersonate police, courts, or government departments — claiming you're implicated in a crime or owe a fine — to frighten you into immediate payment.",
+      "Scammers impersonate police, courts, or government departments, claiming you're implicated in a crime or owe a fine, to frighten you into immediate payment.",
     howItWorks: [
       "A message or call claims to be from police, customs, or a court.",
       "You're accused of an offence or told a parcel in your name contains contraband.",
@@ -205,7 +205,7 @@ export const SCAM_CATEGORIES = [
     safetyTips: [
       "Government bodies never collect fines via SMS or phone transfers.",
       "Hang up and contact the institution through its official number.",
-      "Never act in secret under pressure — talk to someone you trust.",
+      "Never act in secret under pressure. Talk to someone you trust.",
     ],
     stats: { reportsThisWeek: 14, trend: "-6%", trendDir: "down" },
   },

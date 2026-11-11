@@ -134,7 +134,7 @@ export default function AppSettings() {
 
       <Section id="data" icon={Icons.IconDatabase} title="Your data" description="Export or clear your information.">
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary" leftIcon={<Icons.IconDownload className="h-4 w-4" />} onClick={() => notify("Export started — check your email")}>
+          <Button variant="secondary" leftIcon={<Icons.IconDownload className="h-4 w-4" />} onClick={() => notify("Export started. Check your email.")}>
             Export my data
           </Button>
           <Button variant="danger-outline" leftIcon={<Icons.IconTrash className="h-4 w-4" />} onClick={() => setConfirm("clear")}>

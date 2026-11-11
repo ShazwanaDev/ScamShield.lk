@@ -163,7 +163,7 @@ export function VerifyEmailPage() {
         We've sent a verification link to your inbox. Click it to activate your account, then come back to sign in.
       </p>
       <Button as={Link} to="/login" className="mt-6" fullWidth>
-        I've verified — sign in
+        I've verified, sign in
       </Button>
       <button className="mt-3 text-sm text-muted-foreground hover:text-foreground">Resend verification email</button>
     </div>

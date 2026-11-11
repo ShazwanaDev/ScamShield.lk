@@ -8,7 +8,7 @@ const GROUPS = [
     title: "Using the checker",
     items: [
       { q: "How do I check a message?", a: "Paste the SMS into the checker and press ‘Check message’. You'll get a verdict, a confidence score, and highlighted risky phrases in seconds." },
-      { q: "Which languages are supported?", a: "English, Sinhala, Tamil, Singlish, Thanglish, and code-mixed messages — the way people actually text in Sri Lanka." },
+      { q: "Which languages are supported?", a: "English, Sinhala, Tamil, Singlish, Thanglish, and code-mixed messages, the way people actually text in Sri Lanka." },
       { q: "Can the result be wrong?", a: "Yes. No detector is perfect. Treat the result as guidance; when in doubt, verify with the real organisation through an official channel." },
       { q: "What do scam, spam and legitimate mean?", a: "Scam = likely fraud designed to steal money or data. Spam = unsolicited promotions. Legitimate = no strong scam signals. Each comes with a confidence score." },
     ],

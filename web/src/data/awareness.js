@@ -9,7 +9,7 @@ export const ARTICLES = [
     published: "2026-07-18",
     author: "ScamShield LK Team",
     excerpt:
-      "Four quick checks — urgency, unexpected rewards, requests for codes or money, and unofficial links — catch the vast majority of scam texts.",
+      "Four quick checks catch the vast majority of scam texts: urgency, unexpected rewards, requests for codes or money, and unofficial links.",
     tags: ["basics", "otp", "links"],
     sections: [
       {
@@ -18,8 +18,8 @@ export const ARTICLES = [
           "Most scam SMS share the same DNA. Before you tap anything, run these four checks:",
         ],
         list: [
-          "Urgency — 'act within 2 hours', 'account will be blocked today'. Pressure is designed to stop you thinking.",
-          "Unexpected reward or problem — a prize you never entered, or a parcel you never ordered.",
+          "Urgency: 'act within 2 hours', 'account will be blocked today'. Pressure is designed to stop you thinking.",
+          "Unexpected reward or problem: a prize you never entered, or a parcel you never ordered.",
           "A request for a code, PIN, password, NIC, or money.",
           "A link or number that isn't your provider's official one.",
         ],
@@ -28,20 +28,20 @@ export const ARTICLES = [
         heading: "If two or more match…",
         body: [
           "Treat the message as a scam until proven otherwise. Don't click, don't call the number in the message, and don't reply.",
-          "Instead, contact the organisation using a number you already trust — the one on the back of your card, or their official app.",
+          "Instead, contact the organisation using a number you already trust, such as the one on the back of your card, or their official app.",
         ],
       },
       {
         heading: "When you're not sure",
         body: [
-          "Paste the message into ScamShield LK. It highlights the exact words that make a message risky, in Sinhala, Tamil, English, or a mix — so you learn what to look for next time.",
+          "Paste the message into ScamShield LK. It highlights the exact words that make a message risky, in Sinhala, Tamil, English, or a mix, so you learn what to look for next time.",
         ],
       },
     ],
   },
   {
     slug: "never-share-your-otp",
-    title: "Why you should never share your OTP — even with 'the bank'",
+    title: "Why you should never share your OTP, even with 'the bank'",
     category: "Banking",
     tone: "scam",
     readMins: 5,
@@ -54,7 +54,7 @@ export const ARTICLES = [
       {
         heading: "What an OTP actually does",
         body: [
-          "A one-time password authorises a specific action — a login, a transfer, a card registration. Whoever holds the OTP at that moment can complete that action.",
+          "A one-time password authorises a specific action: a login, a transfer, a card registration. Whoever holds the OTP at that moment can complete that action.",
           "That's why sharing it is exactly like handing over the transaction itself.",
         ],
       },
@@ -63,7 +63,7 @@ export const ARTICLES = [
         body: ["The scammer initiates a transaction on your account, then calls you:"],
         list: [
           "'We noticed suspicious activity and need to verify you.'",
-          "'You'll receive a code now — read it back to confirm it's really you.'",
+          "'You'll receive a code now. Read it back to confirm it's really you.'",
           "The code you read out authorises their transaction, not a verification.",
         ],
       },
@@ -106,14 +106,14 @@ export const ARTICLES = [
       {
         heading: "Normalise reporting",
         body: [
-          "Reassure them that falling for — or nearly falling for — a scam is nothing to be ashamed of. The goal is to check early and report, so the next person is warned too.",
+          "Reassure them that falling for a scam, or nearly falling for one, is nothing to be ashamed of. The goal is to check early and report, so the next person is warned too.",
         ],
       },
     ],
   },
   {
     slug: "code-mixed-scams-sinhala-tamil-english",
-    title: "Scams don't stick to one language — and neither do we",
+    title: "Scams don't stick to one language, and neither do we",
     category: "Multilingual",
     tone: "info",
     readMins: 5,
@@ -127,7 +127,7 @@ export const ARTICLES = [
         heading: "Why language matters",
         body: [
           "A message like 'Free 10GB, dan-ma activate karanna' blends English and romanised Sinhala. English-only spam filters simply don't see it.",
-          "ScamShield LK is built for exactly this reality — Sinhala script, Tamil script, English, Singlish, Thanglish, and code-mixed text.",
+          "ScamShield LK is built for exactly this reality: Sinhala script, Tamil script, English, Singlish, Thanglish, and code-mixed text.",
         ],
       },
       {
@@ -143,7 +143,7 @@ export const ARTICLES = [
   },
   {
     slug: "you-were-scammed-what-now",
-    title: "You think you were scammed — what to do in the first hour",
+    title: "You think you were scammed: what to do in the first hour",
     category: "Recovery",
     tone: "scam",
     readMins: 4,
@@ -158,14 +158,14 @@ export const ARTICLES = [
         list: [
           "Call your bank's 24-hour hotline immediately and freeze the card or account.",
           "Change passwords for any account whose details you shared.",
-          "Keep the message and any receipts as evidence — screenshots included.",
+          "Keep the message and any receipts as evidence, screenshots included.",
           "Report to the police / CID cybercrime unit and to ScamShield LK.",
         ],
       },
       {
         heading: "Then protect others",
         body: [
-          "Reporting the number and message helps the community — and feeds real examples that make detection better for everyone.",
+          "Reporting the number and message helps the community and feeds real examples that make detection better for everyone.",
         ],
       },
     ],
@@ -186,14 +186,14 @@ export const ARTICLES = [
         body: ["Almost every parcel scam follows the same three beats:"],
         list: [
           "An SMS says a delivery failed or is 'held at customs'.",
-          "A small fee (Rs. 50–300) is demanded via a link — small enough to seem harmless.",
+          "A small fee (Rs. 50 to 300) is demanded via a link, small enough to seem harmless.",
           "The payment page quietly captures your card details.",
         ],
       },
       {
         heading: "Shop and track safely",
         body: [
-          "Track parcels only in the courier's official app or website — never through a link in an SMS.",
+          "Track parcels only in the courier's official app or website, never through a link in an SMS.",
           "Genuine customs charges are handled through official channels, not a random SMS with a countdown.",
         ],
       },

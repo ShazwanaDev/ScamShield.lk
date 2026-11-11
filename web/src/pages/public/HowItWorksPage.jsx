@@ -7,7 +7,7 @@ const STEPS = [
   {
     icon: Icons.IconClipboard,
     title: "1. Paste the message",
-    text: "Copy any suspicious SMS and paste it into the checker — in English, Sinhala, Tamil, Singlish, or a mix. You can also try one of our examples.",
+    text: "Copy any suspicious SMS and paste it into the checker in English, Sinhala, Tamil, Singlish, or a mix. You can also try one of our examples.",
   },
   {
     icon: Icons.IconGlobe,
@@ -22,7 +22,7 @@ const STEPS = [
   {
     icon: Icons.IconWand,
     title: "4. You see why",
-    text: "You get a plain verdict, a confidence score, the exact risky phrases highlighted, and clear next steps — never a black box.",
+    text: "You get a plain verdict, a confidence score, the exact risky phrases highlighted, and clear next steps. Never a black box.",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function HowItWorksPage() {
         variant="navy"
         eyebrow="How it works"
         title="Transparent scam detection, step by step"
-        description="No magic and no black box — here's exactly how ScamShield LK turns a suspicious message into a clear, explainable answer."
+        description="No magic and no black box. Here's exactly how ScamShield LK turns a suspicious message into a clear, explainable answer."
         icon={<Icons.IconWand className="h-3.5 w-3.5" />}
         actions={
           <Button as={Link} to="/check" variant="teal" leftIcon={<Icons.IconShieldCheck className="h-5 w-5" />}>
@@ -59,9 +59,9 @@ export default function HowItWorksPage() {
           <SectionHeading eyebrow="The output" title="What the three verdicts mean" align="center" />
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {[
-              { v: "scam", d: "Strong signals of fraud — designed to steal money, codes, or data. Don't engage; report it." },
+              { v: "scam", d: "Strong signals of fraud, designed to steal money, codes, or data. Don't engage; report it." },
               { v: "spam", d: "Unsolicited bulk or promotional messaging. Not necessarily fraud, but safe to ignore and block." },
-              { v: "legitimate", d: "No strong scam signals — typical transactional or informational text. Stay cautious regardless." },
+              { v: "legitimate", d: "No strong scam signals. Typical transactional or informational text. Stay cautious regardless." },
             ].map((x) => (
               <Card key={x.v} className="p-6">
                 <VerdictBadge verdict={x.v} />
@@ -76,7 +76,7 @@ export default function HowItWorksPage() {
             <h3 className="text-section-title text-foreground">Explainability by design</h3>
             <p className="mt-2 text-[15px] text-foreground-secondary">
               Every result highlights the specific words and phrases that drove it, with a simple contribution view. That's how
-              you learn to spot the next scam yourself — the tool teaches, it doesn't just decide.
+              you learn to spot the next scam yourself. The tool teaches, it doesn't just decide.
             </p>
           </div>
           <Button as={Link} to="/research" variant="secondary" rightIcon={<Icons.IconArrowRight className="h-4 w-4" />}>

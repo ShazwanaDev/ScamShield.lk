@@ -3,7 +3,7 @@ import RESULTS from "../../data/modelResults.json";
 import { PageHeader, Card, CardHeader, CardTitle, CardContent, Stat, Badge, ProgressBar, Select, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
 
-const fmt = (x) => (x == null ? "—" : x.toFixed(2));
+const fmt = (x) => (x == null ? "n/a" : x.toFixed(2));
 const LANGUAGE_NAMES = {
   english: "English", sinhala: "Sinhala", tamil: "Tamil", singlish: "Singlish",
   thanglish: "Thanglish", code_mixed: "Code-mixed",
@@ -82,7 +82,7 @@ export default function AdminEvaluation() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="F1 on real messages" value={fmt(model.real.f1)} hint={`95% range ${fmt(model.real.f1Ci95[0])}–${fmt(model.real.f1Ci95[1])}`} icon={<Icons.IconTarget className="h-5 w-5" />} tone="primary" />
+        <Stat label="F1 on real messages" value={fmt(model.real.f1)} hint={`95% range ${fmt(model.real.f1Ci95[0])} to ${fmt(model.real.f1Ci95[1])}`} icon={<Icons.IconTarget className="h-5 w-5" />} tone="primary" />
         <Stat label="Precision" value={fmt(model.real.precision)} icon={<Icons.IconCheckCircle className="h-5 w-5" />} tone="legit" />
         <Stat label="Recall (scams caught)" value={fmt(model.real.recall)} icon={<Icons.IconActivity className="h-5 w-5" />} tone="teal" />
         <Stat label="AUC-ROC" value={fmt(model.real.auc)} icon={<Icons.IconGauge className="h-5 w-5" />} tone="info" />

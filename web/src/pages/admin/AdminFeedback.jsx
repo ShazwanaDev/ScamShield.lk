@@ -42,7 +42,7 @@ export default function AdminFeedback() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Prediction feedback" description="Messages where users disagreed with the model — candidates for the training set." icon={<Icons.IconCheckSquare className="h-5 w-5" />} />
+      <PageHeader title="Prediction feedback" description="Messages where users disagreed with the model. Candidates for the training set." icon={<Icons.IconCheckSquare className="h-5 w-5" />} />
       <Alert tone="info" title="Human-in-the-loop">
         Confirmed corrections can be added to the dataset (labelled by the user) to improve future models. Approved additions are appended offline, not auto-retrained.
       </Alert>

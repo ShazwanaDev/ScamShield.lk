@@ -6,7 +6,7 @@ import { Card, Button, SectionHeading } from "../../ui/index.js";
 const VALUES = [
   { icon: Icons.IconLock, title: "Privacy-first", text: "Checked messages are stored to measure and improve the model, but never shared or sold. Leave out personal details." },
   { icon: Icons.IconWand, title: "Transparent", text: "Every result is explained. We'd rather teach you to spot scams than ask for blind trust." },
-  { icon: Icons.IconGlobe, title: "Inclusive", text: "Built for every language Sri Lankans text in — not just clean English." },
+  { icon: Icons.IconGlobe, title: "Inclusive", text: "Built for every language Sri Lankans text in, not just clean English." },
   { icon: Icons.IconUsers, title: "Community-driven", text: "Reports and feedback from real people make detection better for everyone." },
 ];
 
@@ -17,13 +17,13 @@ export default function AboutPage() {
         variant="navy"
         eyebrow="About"
         title="Fewer people falling for scams in Sri Lanka"
-        description="ScamShield LK helps anyone check a suspicious SMS in seconds — in their own language — and understand exactly why it's risky."
+        description="ScamShield LK helps anyone check a suspicious SMS in seconds, in their own language, and understand exactly why it's risky."
         icon={<Icons.IconShieldCheck className="h-3.5 w-3.5" />}
       />
       <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="prose-none space-y-4 text-[15px] leading-relaxed text-foreground-secondary">
           <p>
-            SMS scams cost Sri Lankans money and peace of mind every day — fake bank alerts, lottery wins, parcel fees,
+            SMS scams cost Sri Lankans money and peace of mind every day: fake bank alerts, lottery wins, parcel fees,
             job offers, and OTP traps. They spread in Sinhala, Tamil, English, and a constant mix of all three, which is
             exactly where ordinary spam filters fall short.
           </p>
@@ -31,7 +31,7 @@ export default function AboutPage() {
             ScamShield LK is a research project that tackles this head-on: a multilingual classifier that labels a message
             as <strong className="text-foreground">scam</strong>, <strong className="text-foreground">spam</strong>, or{" "}
             <strong className="text-foreground">legitimate</strong>, highlights the words that make it risky, and explains
-            its reasoning — so people don't just get an answer, they learn.
+            its reasoning, so people don't just get an answer. They learn.
           </p>
         </div>
 
