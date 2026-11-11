@@ -35,12 +35,12 @@ export default function AdminSystem() {
       />
 
       <Card className={cn("flex items-center gap-4 p-5", allUp ? "bg-legit-light" : "bg-warning-light")}>
-        <span className={cn("inline-flex h-12 w-12 items-center justify-center rounded-full", allUp ? "bg-legit text-white" : "bg-spam text-white")}>
+        <span className={cn("inline-flex h-12 w-12 items-center justify-center rounded-full", allUp ? "bg-legit text-legit-foreground" : "bg-spam text-spam-foreground")}>
           {allUp ? <Icons.IconCheckCircle className="h-6 w-6" /> : <Icons.IconAlertTriangle className="h-6 w-6" />}
         </span>
         <div>
           <p className="text-lg font-bold text-foreground">{allUp ? "All systems operational" : "Partial degradation"}</p>
-          <p className="text-sm text-foreground-secondary">{allUp ? "Every service is responding normally." : "One or more services are degraded — see below."}</p>
+          <p className="text-sm text-foreground-secondary">{allUp ? "Every service is responding normally." : "One or more services are degraded. See below."}</p>
         </div>
       </Card>
 

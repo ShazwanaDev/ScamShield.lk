@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { SAMPLE_MESSAGES } from "../../data/samples.js";
 import { classifyLocal } from "../../data/mockClassifier.js";
+import { CATEGORY_BY_SLUG } from "../../data/scamCategories.js";
 import HighlightedMessage from "../../components/analyzer/HighlightedMessage.jsx";
 import { PageHeader, Card, CardHeader, CardTitle, CardContent, Alert, VerdictBadge, Badge, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
@@ -56,7 +57,7 @@ export default function AdminExplainability() {
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5"><Icons.IconGlobe className="h-4 w-4" /> {result.language.label}</span>
-              <span className="flex items-center gap-1.5"><Icons.IconTag className="h-4 w-4" /> {result.category || "—"}</span>
+              <span className="flex items-center gap-1.5"><Icons.IconTag className="h-4 w-4" /> {CATEGORY_BY_SLUG[result.category]?.name || result.category || "None"}</span>
             </div>
           </Card>
 

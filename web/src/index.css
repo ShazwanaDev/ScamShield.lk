@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    color-scheme: light;
-    --ring: 132 202 255; /* #84CAFF */
+    color-scheme: dark;
+    --ring: 255 106 96; /* #FF6A60 */
   }
 
   * {
@@ -13,13 +13,14 @@
   }
 
   html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    background-color: #0b0b0c;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01";
   }
 
   /* Sinhala & Tamil content is tagged with lang= so the right script font wins
@@ -33,11 +34,13 @@
     line-height: 1.7;
   }
 
-  /* Headings inherit their colour so they stay legible inside dark sections
-     (hero, footer, app promo). Pages set colour explicitly where needed. */
-  h1, h2, h3, h4, h5, h6 {
+  /* Headings use the display face and inherit colour so they stay legible on
+     every surface. Pages set colour explicitly where needed. */
+  h1, h2, h3, h4 {
+    @apply font-display;
     color: inherit;
     text-wrap: balance;
+    letter-spacing: -0.02em;
   }
 
   :focus-visible {
@@ -47,8 +50,15 @@
   }
 
   ::selection {
-    background: #d1e9ff;
-    color: #0b1f33;
+    background: rgba(255, 59, 48, 0.32);
+    color: #ffffff;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  progress {
+    accent-color: #ff3b30;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -69,7 +79,51 @@
     @apply sr-only;
   }
   .skip-link:focus {
-    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white shadow-lg;
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-md bg-foreground px-4 py-2 text-sm font-semibold text-background shadow-lg;
+  }
+
+  /* "[ The challenge ]" style section label */
+  .eyebrow-bracket {
+    @apply inline-flex items-center gap-1.5 font-mono text-xs font-medium text-primary-soft;
+  }
+  .eyebrow-bracket::before {
+    content: "[";
+    @apply text-primary/70;
+  }
+  .eyebrow-bracket::after {
+    content: "]";
+    @apply text-primary/70;
+  }
+
+  /* Big numbers: display face with tabular figures */
+  .figure {
+    @apply font-display tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  /* Second line of a two-tone headline */
+  .text-fade {
+    background-image: linear-gradient(180deg, #d9d9dd 0%, #8c8c95 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-glow {
+    background-image: linear-gradient(180deg, #ffffff 0%, #ffd2cd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Frosted glass panel used on the landing page */
+  .glass {
+    background: linear-gradient(180deg, rgba(38, 30, 31, 0.72) 0%, rgba(22, 20, 21, 0.78) 100%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 30px 60px -20px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
@@ -90,12 +144,12 @@
 
   /* Skeleton shimmer surface */
   .skeleton {
-    @apply rounded-md bg-muted;
+    @apply rounded-md bg-cell;
     background-image: linear-gradient(
       90deg,
-      rgba(234, 239, 245, 0) 0,
-      rgba(255, 255, 255, 0.65) 50%,
-      rgba(234, 239, 245, 0) 100%
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.045) 50%,
+      rgba(255, 255, 255, 0) 100%
     );
     background-size: 400px 100%;
     background-repeat: no-repeat;
@@ -105,22 +159,85 @@
   /* Thin scrollbars for scroll regions (tables, sidebars) */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-color: #2e2e34 transparent;
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
+    background-color: #2e2e34;
     border-radius: 999px;
   }
 
-  /* Grid backdrop used behind hero / dark sections */
+  /* Grid backdrop used behind dark sections */
   .bg-grid {
     background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
     background-size: 44px 44px;
+  }
+
+  /* Dotted backdrop (presentation surfaces, empty chart areas) */
+  .bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  /* Diagonal hatching for "no data" cells and placeholders */
+  .bg-hatch {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  /* Subtle film grain to break flat dark surfaces */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ── Landing page motion ─────────────────────────────────────────── */
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 0.9; transform: scale(1); }
+}
+.twinkle {
+  animation: twinkle 4.8s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+}
+.marquee-track.reverse {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes ray-drift {
+  0%, 100% { transform: translateX(0); opacity: 0.8; }
+  50% { transform: translateX(2%); opacity: 1; }
+}
+.rays {
+  animation: ray-drift 14s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .twinkle,
+  .rays {
+    animation: none !important;
   }
 }

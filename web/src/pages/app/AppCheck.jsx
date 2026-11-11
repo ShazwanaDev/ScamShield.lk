@@ -6,12 +6,14 @@ import MessageAnalyzer from "../../components/analyzer/MessageAnalyzer.jsx";
 import ResultView from "../../components/analyzer/ResultView.jsx";
 import { PageHeader, useToast } from "../../ui/index.js";
 import { IconShieldCheck } from "../../components/icons.jsx";
+import { useScrollIntoView } from "../../components/SmoothScroll.jsx";
 
 export default function AppCheck() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
+  const scrollIntoView = useScrollIntoView();
 
   const onResult = (r) => {
     setResult(r);
@@ -22,7 +24,7 @@ export default function AppCheck() {
       confidence: r.confidence,
       classification_id: r.classificationId,
     });
-    requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    requestAnimationFrame(() => scrollIntoView(resultRef.current));
   };
 
   const onFeedback = async (correct) => {
@@ -31,7 +33,7 @@ export default function AppCheck() {
     } catch {
       /* offline / no backend — feedback still acknowledged in UI */
     }
-    toast({ tone: "success", title: "Feedback recorded", description: "Thanks — this helps improve detection." });
+    toast({ tone: "success", title: "Feedback recorded", description: "Thanks. This helps improve detection." });
   };
 
   return (

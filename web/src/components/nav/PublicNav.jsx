@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Brand from "../Brand.jsx";
-import { Button, cn } from "../../ui/index.js";
+import { Button, CtaArrow, cn } from "../../ui/index.js";
 import { useAuth } from "../../hooks/useAuth.jsx";
-import { IconMenu, IconClose, IconShieldCheck } from "../icons.jsx";
+import { IconMenu, IconClose } from "../icons.jsx";
 
 const LINKS = [
   { to: "/how-it-works", label: "How it works" },
   { to: "/scam-types", label: "Scam types" },
   { to: "/languages", label: "Languages" },
-  { to: "/alerts", label: "Community alerts" },
+  { to: "/alerts", label: "Alerts" },
   { to: "/awareness", label: "Awareness" },
-  { to: "/about", label: "About" },
+  { to: "/research", label: "Research" },
 ];
 
-export default function PublicNav() {
+/**
+ * Floating header. Transparent over the landing hero, frosted once the page
+ * scrolls or on any other page.
+ */
+export default function PublicNav({ overlay = false }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -22,31 +26,33 @@ export default function PublicNav() {
 
   useEffect(() => setOpen(false), [location.pathname]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const solid = !overlay || scrolled || open;
+
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b transition",
-        scrolled ? "border-border bg-surface/90 backdrop-blur" : "border-transparent bg-surface",
+        "fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300",
+        solid ? "border-white/[0.06] bg-background/75 backdrop-blur-xl" : "border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto] items-center gap-4 px-4 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-8">
         <Brand />
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               className={({ isActive }) =>
                 cn(
-                  "rounded-md px-3 py-2 text-sm font-medium transition",
-                  isActive ? "text-primary" : "text-foreground-secondary hover:bg-background-secondary hover:text-foreground",
+                  "rounded-md px-3 py-2 text-[13.5px] transition",
+                  isActive ? "text-foreground" : "text-foreground-secondary hover:text-foreground",
                 )
               }
             >
@@ -55,23 +61,18 @@ export default function PublicNav() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2.5 lg:flex">
-          {isAuthenticated ? (
-            <Button as={Link} to="/app" variant="secondary" size="sm">
-              Dashboard
-            </Button>
-          ) : (
-            <Button as={Link} to="/login" variant="ghost" size="sm">
-              Sign in
-            </Button>
-          )}
-          <Button as={Link} to="/check" size="sm" leftIcon={<IconShieldCheck className="h-4 w-4" />}>
+        <div className="hidden items-center justify-end gap-2 lg:flex">
+          <Button as={Link} to={isAuthenticated ? "/app" : "/login"} variant="ghost" size="sm">
+            {isAuthenticated ? "Dashboard" : "Sign in"}
+          </Button>
+          <Button as={Link} to="/check" variant="inverse" size="sm" className="group pr-1.5">
             Check a message
+            <CtaArrow small className="ml-0.5" />
           </Button>
         </div>
 
         <button
-          className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-background-secondary lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-md text-foreground hover:bg-white/[0.06] lg:hidden"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
@@ -82,16 +83,16 @@ export default function PublicNav() {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="border-t border-border bg-surface lg:hidden">
-          <nav className="mx-auto max-w-7xl space-y-1 px-4 py-4 sm:px-6" aria-label="Mobile">
+        <div className="border-t border-white/[0.06] lg:hidden">
+          <nav className="mx-auto max-w-7xl space-y-0.5 px-4 py-4 sm:px-6" aria-label="Mobile">
             {LINKS.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 className={({ isActive }) =>
                   cn(
-                    "block rounded-md px-3 py-2.5 text-[15px] font-medium",
-                    isActive ? "bg-primary/10 text-primary" : "text-foreground hover:bg-background-secondary",
+                    "block rounded-md px-3 py-2.5 text-[15px]",
+                    isActive ? "bg-white/[0.06] text-foreground" : "text-foreground-secondary hover:bg-white/[0.04] hover:text-foreground",
                   )
                 }
               >
@@ -99,10 +100,10 @@ export default function PublicNav() {
               </NavLink>
             ))}
             <div className="grid grid-cols-2 gap-2.5 pt-3">
-              <Button as={Link} to={isAuthenticated ? "/app" : "/login"} variant="secondary" fullWidth>
+              <Button as={Link} to={isAuthenticated ? "/app" : "/login"} variant="outline" fullWidth>
                 {isAuthenticated ? "Dashboard" : "Sign in"}
               </Button>
-              <Button as={Link} to="/check" fullWidth>
+              <Button as={Link} to="/check" variant="inverse" fullWidth>
                 Check a message
               </Button>
             </div>

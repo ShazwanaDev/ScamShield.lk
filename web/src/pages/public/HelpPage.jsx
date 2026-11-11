@@ -30,7 +30,7 @@ export default function HelpPage() {
         icon={<Icons.IconLifeBuoy className="h-3.5 w-3.5" />}
       >
         <div className="mt-6 max-w-xl">
-          <div className="[&_input]:h-12 [&_input]:bg-white">
+          <div className="[&_input]:h-12">
             <SearchInput placeholder="Search help articles…" aria-label="Search help" />
           </div>
         </div>

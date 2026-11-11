@@ -32,7 +32,7 @@ export default function HighlightedMessage({ text = "", triggers = [], verdict =
       {parts.map((part, i) => {
         const isHit = phrases.some((p) => p.toLowerCase() === part.toLowerCase());
         return isHit ? (
-          <mark key={i} className={cn("rounded px-1 py-0.5 font-semibold", v.bg, v.text)}>
+          <mark key={i} className={cn("rounded-[3px] font-semibold [box-decoration-break:clone]", v.bg, v.text)}>
             {part}
           </mark>
         ) : (

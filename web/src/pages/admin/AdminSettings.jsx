@@ -33,7 +33,7 @@ export default function AdminSettings() {
             <label htmlFor="thr" className="font-medium text-foreground">Low-confidence threshold</label>
             <span className="font-semibold tabular-nums text-primary">{threshold}%</span>
           </div>
-          <input id="thr" type="range" min={50} max={90} value={threshold} onChange={(e) => setThreshold(+e.target.value)} className="w-full accent-[#175CD3]" />
+          <input id="thr" type="range" min={50} max={90} value={threshold} onChange={(e) => setThreshold(+e.target.value)} className="w-full accent-[#FF3B30]" />
           <p className="mt-1 text-xs text-muted-foreground">Predictions below this confidence are shown as "low confidence" rather than a firm verdict.</p>
         </div>
         <Field label="Default active model">
@@ -63,7 +63,7 @@ export default function AdminSettings() {
       </Section>
 
       <Section icon={Icons.IconKey} title="Security" description="Access and privacy controls.">
-        <Alert tone="warning" title="Known gap">Admin access is gated client-side only in this build. Production must enforce authentication and authorization server-side.</Alert>
+        <Alert tone="info" title="How admin access works">Admin sign-in is checked by the server, and the moderation API refuses requests without its signed session token. The switches below are sample settings and are not saved yet.</Alert>
         <Switch label="Require 2FA for admins" hint="Second factor on every admin sign-in" checked onChange={() => {}} />
         <Switch label="Redact PII in logs" hint="Strip OTPs, cards, NIC from stored logs" checked onChange={() => {}} />
       </Section>

@@ -5,7 +5,7 @@ import { paginate } from "../../data/store.js";
 import { PageHeader, Card, CardHeader, CardTitle, CardContent, DataTable, Pagination, SearchInput, Select, Badge, Button, ProgressBar, Alert, EmptyState, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
 
-const SOURCE_TONE = { real: "legit", reconstructed: "teal", synthetic_augmentation: "spam" };
+const SOURCE_TONE = { real: "legit", reconstructed: "info", synthetic_augmentation: "spam" };
 const SOURCE_LABEL = { real: "Real", reconstructed: "Reconstructed", synthetic_augmentation: "Synthetic" };
 const LABEL_TONE = { scam: "scam", spam: "spam", legitimate: "legit" };
 
@@ -59,7 +59,7 @@ export default function AdminDataset() {
       />
 
       <Alert tone="warning" title="Data-integrity rule">
-        Only <strong>real</strong> and <strong>reconstructed</strong> rows count toward the 500–1000 primary target. Synthetic-augmentation rows are clearly flagged and never treated as primary evidence.
+        Only <strong>real</strong> and <strong>reconstructed</strong> rows count toward the 500 to 1,000 primary target. Synthetic-augmentation rows are clearly flagged and never treated as primary evidence.
       </Alert>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -65,7 +65,7 @@ export default function AppHistory() {
             title="No checks yet"
             description="Messages you check will appear here."
             action={
-              <Link to="/app/check" className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-white">
+              <Link to="/app/check" className="inline-flex h-10 items-center rounded-md bg-gradient-cta px-4 text-sm font-medium text-white shadow-glow-sm transition hover:brightness-110">
                 Check a message
               </Link>
             }

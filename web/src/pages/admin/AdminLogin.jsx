@@ -43,7 +43,7 @@ export default function AdminLogin() {
         </div>
         <div className="rounded-xl border border-white/10 bg-surface p-6 shadow-xl sm:p-8">
           <div className="mb-6 flex items-center gap-3">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-navy text-white">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white/[0.06] text-primary ring-1 ring-inset ring-white/10">
               <IconShieldCheck className="h-6 w-6" />
             </span>
             <div>

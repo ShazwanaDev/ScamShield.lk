@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth.jsx";
 import { ToastProvider, Spinner } from "./ui/index.js";
+import SmoothScroll from "./components/SmoothScroll.jsx";
 
 import PublicLayout from "./layouts/PublicLayout.jsx";
 import AuthLayout from "./layouts/AuthLayout.jsx";
@@ -64,6 +65,7 @@ const AdminApp = lazy(() => import("./pages/admin/AdminApp.jsx"));
 export default function App() {
   return (
     <BrowserRouter>
+      <SmoothScroll />
       <AuthProvider>
         <ToastProvider>
           <Routes>

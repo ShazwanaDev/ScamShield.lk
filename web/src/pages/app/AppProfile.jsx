@@ -11,7 +11,7 @@ export default function AppProfile() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(user?.email?.split("@")[0] || "");
+  const [name, setName] = useState(user?.name || user?.email?.split("@")[0] || "");
 
   const checks = getHistory(user?.email).length;
   const reports = getMyReports(user?.email).length;
@@ -28,7 +28,7 @@ export default function AppProfile() {
 
       <Card className="p-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
-          <Avatar name={user?.email || "User"} size="lg" className="h-16 w-16 text-lg" />
+          <Avatar name={user?.name || user?.email || "User"} size="lg" className="h-16 w-16 text-lg" />
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl font-bold text-foreground">{name}</h2>
             <p className="text-sm text-muted-foreground">{user?.email}</p>

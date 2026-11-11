@@ -4,7 +4,7 @@ import { paginate } from "../../data/store.js";
 import { PageHeader, DataTable, Pagination, SearchInput, Select, Badge, Avatar, Modal, Button, EmptyState, useToast } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
 
-const ROLE_TONE = { admin: "info", moderator: "teal", user: "neutral" };
+const ROLE_TONE = { admin: "primary", moderator: "info", user: "neutral" };
 const STATUS_TONE = { active: "legit", suspended: "scam" };
 
 export default function AdminUsers() {

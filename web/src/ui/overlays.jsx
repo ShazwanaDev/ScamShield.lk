@@ -25,7 +25,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
 
   return createPortal(
     <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-4">
-      <div className="absolute inset-0 bg-navy-deep/60 backdrop-blur-sm animate-fade-in" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose} aria-hidden="true" />
       <div
         ref={ref}
         role="dialog"
@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-labelledby={title ? titleId : undefined}
         tabIndex={-1}
         className={cn(
-          "relative z-10 max-h-[92vh] w-full overflow-hidden rounded-t-xl bg-surface shadow-xl outline-none animate-slide-up-sheet sm:rounded-xl sm:animate-scale-in",
+          "relative z-10 max-h-[92vh] w-full overflow-hidden rounded-t-xl bg-surface-raised shadow-xl ring-1 ring-white/[0.08] outline-none animate-slide-up-sheet sm:rounded-xl sm:animate-scale-in",
           sizes[size],
           className,
         )}
@@ -49,13 +49,13 @@ export function Modal({ open, onClose, title, description, children, footer, siz
               {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
             </div>
             {onClose && (
-              <button onClick={onClose} className="-mr-1 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-background-secondary" aria-label="Close">
+              <button onClick={onClose} className="-mr-1 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-white/[0.06]" aria-label="Close">
                 <IconClose className="h-5 w-5" />
               </button>
             )}
           </div>
         )}
-        <div className="max-h-[70vh] overflow-y-auto scrollbar-thin px-5 py-4">{children}</div>
+        <div className="max-h-[70vh] overflow-y-auto scrollbar-thin px-5 py-4" data-lenis-prevent>{children}</div>
         {footer && <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-4">{footer}</div>}
       </div>
     </div>,
@@ -121,24 +121,24 @@ export function Drawer({ open, onClose, title, children, footer, side = "right",
   if (!open) return null;
   return createPortal(
     <div className="fixed inset-0 z-[70]">
-      <div className="absolute inset-0 bg-navy-deep/60 backdrop-blur-sm animate-fade-in" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={typeof title === "string" ? title : "Panel"}
         className={cn(
-          "absolute top-0 flex h-full w-full max-w-md flex-col bg-surface shadow-xl animate-slide-in-right",
+          "absolute top-0 flex h-full w-full max-w-md flex-col bg-surface-raised shadow-xl ring-1 ring-white/[0.08] animate-slide-in-right",
           side === "right" ? "right-0" : "left-0",
           className,
         )}
       >
         <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4">
           {title && <h2 className="text-section-title text-foreground">{title}</h2>}
-          <button onClick={onClose} className="-mr-1 rounded-md p-1.5 text-muted-foreground hover:bg-background-secondary" aria-label="Close">
+          <button onClick={onClose} className="-mr-1 rounded-md p-1.5 text-muted-foreground hover:bg-white/[0.06]" aria-label="Close">
             <IconClose className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-4">{children}</div>
+        <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-4" data-lenis-prevent>{children}</div>
         {footer && <div className="border-t border-border px-5 py-4">{footer}</div>}
       </div>
     </div>,
@@ -169,7 +169,7 @@ export function Tooltip({ content, children, side = "top", className }) {
         <span
           role="tooltip"
           className={cn(
-            "pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-navy px-2.5 py-1.5 text-xs font-medium text-white shadow-lg animate-fade-in",
+            "pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-surface-raised px-2.5 py-1.5 text-xs font-medium text-foreground shadow-lg ring-1 ring-white/10 animate-fade-in",
             pos[side],
             className,
           )}
@@ -204,7 +204,7 @@ export function DropdownMenu({ trigger, children, align = "right", className }) 
       {open && (
         <div
           className={cn(
-            "absolute top-full z-50 mt-1.5 min-w-[11rem] overflow-hidden rounded-md border border-border bg-surface py-1 shadow-lg animate-scale-in",
+            "absolute top-full z-50 mt-1.5 min-w-[11rem] overflow-hidden rounded-lg border border-white/[0.08] bg-surface-raised py-1 shadow-xl animate-scale-in",
             align === "right" ? "right-0" : "left-0",
             className,
           )}
@@ -221,7 +221,7 @@ export function DropdownItem({ icon, danger, className, children, ...props }) {
   return (
     <button
       className={cn(
-        "flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm transition hover:bg-background-secondary",
+        "flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm transition hover:bg-white/[0.06]",
         danger ? "text-scam" : "text-foreground",
         className,
       )}

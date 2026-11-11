@@ -5,26 +5,34 @@ import { IconLoader } from "../components/icons.jsx";
 /* ── Button ─────────────────────────────────────────────────────── */
 
 const BTN_BASE =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-semibold transition " +
-  "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/50 " +
-  "disabled:pointer-events-none disabled:opacity-50 select-none";
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition duration-200 ease-out " +
+  "active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+  "disabled:pointer-events-none disabled:opacity-45 select-none";
+
+// Filled red controls use the CTA gradient so white text keeps AA contrast.
+const RED_CTA =
+  "bg-gradient-cta text-white shadow-glow-sm hover:brightness-110 " +
+  "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)]";
 
 const BTN_VARIANTS = {
-  primary: "bg-primary text-white shadow-xs hover:bg-primary/90 active:bg-primary",
-  navy: "bg-navy text-white shadow-xs hover:bg-navy/90",
-  teal: "bg-teal text-white shadow-xs hover:bg-teal/90",
-  secondary: "bg-white text-foreground border border-border shadow-xs hover:bg-background-secondary",
-  outline: "border border-border-strong text-foreground hover:bg-background-secondary",
-  ghost: "text-foreground-secondary hover:bg-background-secondary hover:text-foreground",
+  primary: RED_CTA,
+  teal: RED_CTA,
+  danger: RED_CTA,
+  // Light solid button, as in "Request a demo"
+  inverse: "bg-foreground text-background shadow-xs hover:bg-white",
+  navy: "bg-white/[0.06] text-foreground ring-1 ring-inset ring-white/10 hover:bg-white/10",
+  secondary: "bg-surface-raised text-foreground ring-1 ring-inset ring-white/[0.08] hover:bg-[#222227] hover:ring-white/[0.14]",
+  outline: "bg-white/[0.02] text-foreground ring-1 ring-inset ring-white/[0.16] hover:bg-white/[0.07] hover:ring-white/25",
+  ghost: "text-foreground-secondary hover:bg-white/[0.06] hover:text-foreground",
   subtle: "bg-primary/10 text-primary hover:bg-primary/15",
-  danger: "bg-scam text-white shadow-xs hover:bg-scam/90",
-  "danger-outline": "border border-scam/40 text-scam hover:bg-scam-light",
-  success: "bg-legit text-white shadow-xs hover:bg-legit/90",
+  "danger-outline": "text-scam ring-1 ring-inset ring-scam/40 hover:bg-scam/10",
+  "warning-outline": "text-spam ring-1 ring-inset ring-spam/45 hover:bg-spam/10",
+  success: "bg-legit-strong text-white hover:brightness-110",
 };
 
 const BTN_SIZES = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-11 px-4 text-sm",
+  sm: "h-9 px-3 text-[13px]",
+  md: "h-10 px-4 text-sm",
   lg: "h-12 px-5 text-[15px]",
   icon: "h-11 w-11",
   "icon-sm": "h-9 w-9",
@@ -96,23 +104,24 @@ export const IconButton = forwardRef(function IconButton(
 /* ── Badge ──────────────────────────────────────────────────────── */
 
 const BADGE_TONES = {
-  neutral: "bg-background-secondary text-foreground-secondary ring-border",
-  primary: "bg-primary/10 text-primary ring-primary/20",
-  scam: "bg-scam-light text-scam ring-scam/20",
+  neutral: "bg-white/[0.04] text-foreground-secondary ring-white/10",
+  primary: "bg-primary/10 text-primary-soft ring-primary/25",
+  scam: "bg-scam-light text-scam ring-scam/25",
   spam: "bg-spam-light text-spam ring-spam/25",
-  legit: "bg-legit-light text-legit ring-legit/20",
-  success: "bg-legit-light text-legit ring-legit/20",
-  warning: "bg-warning-light text-spam ring-warning/30",
-  error: "bg-scam-light text-scam ring-scam/20",
+  legit: "bg-legit-light text-legit ring-legit/25",
+  success: "bg-legit-light text-legit ring-legit/25",
+  warning: "bg-warning-light text-warning ring-warning/30",
+  error: "bg-scam-light text-scam ring-scam/25",
   info: "bg-info-light text-info ring-info/20",
-  teal: "bg-teal/10 text-teal ring-teal/20",
+  teal: "bg-primary/10 text-primary-soft ring-primary/25",
+  solid: "bg-warning text-warning-foreground ring-transparent",
 };
 
 export function Badge({ tone = "neutral", size = "md", className, icon, children, ...props }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-semibold ring-1 ring-inset",
+        "inline-flex items-center gap-1.5 rounded-md font-medium ring-1 ring-inset",
         size === "sm" ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-1 text-xs",
         BADGE_TONES[tone],
         className,
@@ -170,7 +179,7 @@ export function Avatar({ name = "", src, size = "md", className }) {
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy font-semibold text-white",
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[30%] bg-white/[0.06] font-mono font-medium text-foreground ring-1 ring-inset ring-white/10",
         sizes[size],
         className,
       )}
@@ -187,8 +196,8 @@ const PROGRESS_TONES = {
   scam: "bg-scam",
   spam: "bg-spam",
   legit: "bg-legit",
-  teal: "bg-teal",
-  navy: "bg-navy",
+  teal: "bg-primary",
+  navy: "bg-foreground-secondary",
 };
 
 export function ProgressBar({ value = 0, tone = "primary", className, showLabel = false, size = "md" }) {
@@ -196,7 +205,7 @@ export function ProgressBar({ value = 0, tone = "primary", className, showLabel 
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <div
-        className={cn("w-full overflow-hidden rounded-full bg-background-secondary", size === "sm" ? "h-1.5" : "h-2.5")}
+        className={cn("w-full overflow-hidden rounded-full bg-cell", size === "sm" ? "h-1.5" : "h-2.5")}
         role="progressbar"
         aria-valuenow={Math.round(pct)}
         aria-valuemin={0}
@@ -219,7 +228,7 @@ export function Divider({ className, label }) {
     return (
       <div className={cn("flex items-center gap-3", className)}>
         <span className="h-px flex-1 bg-border" />
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
         <span className="h-px flex-1 bg-border" />
       </div>
     );
@@ -234,5 +243,25 @@ export function Kbd({ children }) {
     <kbd className="inline-flex min-w-[1.5rem] items-center justify-center rounded border border-border bg-background-secondary px-1.5 py-0.5 font-mono text-[11px] font-semibold text-foreground-secondary shadow-xs">
       {children}
     </kbd>
+  );
+}
+
+/* ── CtaArrow ───────────────────────────────────────────────────── */
+
+/** The small square arrow chip that sits at the end of a light CTA button. */
+export function CtaArrow({ small = false, className }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "inline-flex items-center justify-center bg-gradient-cta text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-transform duration-200 group-hover:translate-x-0.5",
+        small ? "h-6 w-6 rounded-[6px]" : "h-7 w-7 rounded-[7px]",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none">
+        <path d="M3 8h9.5M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
   );
 }

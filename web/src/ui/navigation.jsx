@@ -11,7 +11,7 @@ export function Tabs({ tabs, value, onChange, className, variant = "underline" }
       className={cn(
         "flex items-center gap-1 overflow-x-auto scrollbar-thin",
         variant === "underline" && "border-b border-border",
-        variant === "pills" && "rounded-md bg-background-secondary p-1",
+        variant === "pills" && "rounded-md border border-white/[0.08] bg-black/30 p-0.5",
         className,
       )}
     >
@@ -28,16 +28,16 @@ export function Tabs({ tabs, value, onChange, className, variant = "underline" }
               variant === "underline" &&
                 cn(
                   "-mb-px border-b-2 px-3.5 py-2.5 text-sm",
-                  active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground",
+                  active ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground",
                 ),
               variant === "pills" &&
-                cn("rounded px-3.5 py-1.5 text-sm", active ? "bg-surface text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"),
+                cn("rounded-[7px] px-3.5 py-1.5 text-sm", active ? "bg-white/[0.08] text-foreground" : "text-muted-foreground hover:text-foreground"),
             )}
           >
             {t.icon}
             {t.label}
             {t.count != null && (
-              <span className={cn("rounded-full px-1.5 text-[11px] font-semibold", active ? "bg-primary/10 text-primary" : "bg-border/60 text-muted-foreground")}>
+              <span className={cn("rounded px-1.5 font-mono text-[11px]", active ? "bg-primary/15 text-primary-soft" : "bg-white/[0.06] text-muted-foreground")}>
                 {t.count}
               </span>
             )}
@@ -80,11 +80,11 @@ export function Breadcrumbs({ items, className }) {
 
 export function PageHeader({ title, description, breadcrumbs, actions, icon, tone = "primary", className }) {
   const tones = {
-    primary: "bg-primary/10 text-primary",
-    scam: "bg-scam-light text-scam",
-    teal: "bg-teal/10 text-teal",
-    navy: "bg-navy/10 text-navy",
-    info: "bg-info-light text-info",
+    primary: "bg-primary/10 text-primary ring-1 ring-inset ring-primary/20",
+    scam: "bg-scam-light text-scam ring-1 ring-inset ring-scam/25",
+    teal: "bg-primary/10 text-primary-soft ring-1 ring-inset ring-primary/20",
+    navy: "bg-white/[0.05] text-foreground-secondary ring-1 ring-inset ring-white/10",
+    info: "bg-info-light text-info ring-1 ring-inset ring-white/10",
   };
   return (
     <div className={cn("space-y-3", className)}>
@@ -95,8 +95,8 @@ export function PageHeader({ title, description, breadcrumbs, actions, icon, ton
             <span className={cn("hidden h-11 w-11 shrink-0 items-center justify-center rounded-md sm:inline-flex", tones[tone])}>{icon}</span>
           )}
           <div>
-            <h1 className="text-page-title text-foreground">{title}</h1>
-            {description && <p className="mt-1 max-w-2xl text-[15px] text-foreground-secondary">{description}</p>}
+            <h1 className="text-page-title text-foreground sm:text-[2rem]">{title}</h1>
+            {description && <p className="mt-1.5 max-w-2xl text-[15px] text-muted-foreground">{description}</p>}
           </div>
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2.5">{actions}</div>}

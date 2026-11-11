@@ -25,16 +25,16 @@ export function DataTable({
   const showEmpty = !loading && rows.length === 0;
 
   return (
-    <div className={cn("overflow-hidden rounded-lg border border-border bg-surface", className)}>
+    <div className={cn("overflow-hidden rounded-xl border border-white/[0.06] bg-surface", className)}>
       {/* Desktop table */}
       <div className="hidden overflow-x-auto scrollbar-thin md:block">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-background-secondary/60 text-left">
+            <tr className="border-b border-white/[0.06] text-left">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={cn("px-4 py-3 font-semibold text-foreground-secondary", col.align === "right" && "text-right", col.className)}
+                  className={cn("px-4 py-3 text-xs font-medium text-muted-foreground", col.align === "right" && "text-right", col.className)}
                   style={col.width ? { width: col.width } : undefined}
                 >
                   {col.sortable ? (
@@ -60,7 +60,7 @@ export function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-white/[0.05]">
             {loading &&
               Array.from({ length: skeletonRows }).map((_, i) => (
                 <tr key={`sk${i}`}>
@@ -76,10 +76,10 @@ export function DataTable({
                 <tr
                   key={rowKey(row, i)}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={cn("transition", onRowClick && "cursor-pointer hover:bg-background-secondary/60")}
+                  className={cn("transition", onRowClick && "cursor-pointer hover:bg-white/[0.03]")}
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className={cn("px-4 py-3.5 text-foreground", col.align === "right" && "text-right", col.cellClassName)}>
+                    <td key={col.key} className={cn("px-4 py-3.5 text-foreground", col.align === "right" && "text-right font-mono text-[13px] tabular-nums", col.cellClassName)}>
                       {col.cell ? col.cell(row) : row[col.key]}
                     </td>
                   ))}

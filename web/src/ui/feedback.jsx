@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useLenis } from "lenis/react";
 import { cn } from "./cn.js";
 import {
   IconInfo,
@@ -11,11 +12,11 @@ import {
 /* ── Alert ──────────────────────────────────────────────────────── */
 
 const ALERT_TONES = {
-  info: { wrap: "bg-primary/5 border-primary/20 text-foreground", icon: "text-primary", Icon: IconInfo },
+  info: { wrap: "bg-white/[0.03] border-white/[0.08] text-foreground", icon: "text-primary-soft", Icon: IconInfo },
   success: { wrap: "bg-legit-light border-legit/25 text-foreground", icon: "text-legit", Icon: IconCheckCircle },
-  warning: { wrap: "bg-warning-light border-warning/30 text-foreground", icon: "text-spam", Icon: IconAlertTriangle },
+  warning: { wrap: "bg-warning-light border-warning/25 text-foreground", icon: "text-warning", Icon: IconAlertTriangle },
   error: { wrap: "bg-scam-light border-scam/25 text-foreground", icon: "text-scam", Icon: IconAlertCircle },
-  neutral: { wrap: "bg-background-secondary border-border text-foreground", icon: "text-muted-foreground", Icon: IconInfo },
+  neutral: { wrap: "bg-white/[0.03] border-white/[0.08] text-foreground", icon: "text-muted-foreground", Icon: IconInfo },
 };
 
 export function Alert({ tone = "info", title, children, onClose, action, className }) {
@@ -30,7 +31,7 @@ export function Alert({ tone = "info", title, children, onClose, action, classNa
         {action && <div className="mt-2.5">{action}</div>}
       </div>
       {onClose && (
-        <button onClick={onClose} className="shrink-0 rounded p-1 text-muted-foreground hover:bg-black/5" aria-label="Dismiss">
+        <button onClick={onClose} className="shrink-0 rounded p-1 text-muted-foreground hover:bg-white/[0.06]" aria-label="Dismiss">
           <IconClose className="h-4 w-4" />
         </button>
       )}
@@ -44,7 +45,7 @@ export function EmptyState({ icon, title, description, action, className }) {
   return (
     <div className={cn("flex flex-col items-center justify-center px-6 py-14 text-center", className)}>
       {icon && (
-        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-background-secondary text-muted-foreground">
+        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-white/[0.04] text-muted-foreground ring-1 ring-inset ring-white/[0.08]">
           {icon}
         </span>
       )}
@@ -60,7 +61,7 @@ export function EmptyState({ icon, title, description, action, className }) {
 export function ErrorState({ title = "Something went wrong", description, onRetry, retryLabel = "Try again", className }) {
   return (
     <div className={cn("flex flex-col items-center justify-center px-6 py-14 text-center", className)}>
-      <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-scam-light text-scam">
+      <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-scam-light text-scam ring-1 ring-inset ring-scam/25">
         <IconAlertCircle className="h-7 w-7" />
       </span>
       <h3 className="text-card-title text-foreground">{title}</h3>
@@ -68,7 +69,7 @@ export function ErrorState({ title = "Something went wrong", description, onRetr
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-5 inline-flex h-10 items-center rounded-md border border-border-strong px-4 text-sm font-semibold text-foreground hover:bg-background-secondary"
+          className="mt-5 inline-flex h-10 items-center rounded-md px-4 text-sm font-medium text-foreground ring-1 ring-inset ring-white/[0.16] transition hover:bg-white/[0.07]"
         >
           {retryLabel}
         </button>
@@ -95,7 +96,7 @@ export function SkeletonText({ lines = 3, className }) {
 
 export function SkeletonCard({ className }) {
   return (
-    <div className={cn("rounded-lg border border-border bg-surface p-5", className)}>
+    <div className={cn("rounded-xl border border-white/[0.06] bg-surface p-5", className)}>
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="mt-4 h-8 w-1/2" />
       <SkeletonText lines={2} className="mt-4" />
@@ -110,8 +111,8 @@ const ToastCtx = createContext(null);
 const TOAST_TONES = {
   success: { icon: IconCheckCircle, color: "text-legit", ring: "border-legit/25" },
   error: { icon: IconAlertCircle, color: "text-scam", ring: "border-scam/25" },
-  warning: { icon: IconAlertTriangle, color: "text-spam", ring: "border-warning/30" },
-  info: { icon: IconInfo, color: "text-primary", ring: "border-primary/20" },
+  warning: { icon: IconAlertTriangle, color: "text-warning", ring: "border-warning/30" },
+  info: { icon: IconInfo, color: "text-primary-soft", ring: "border-white/[0.1]" },
 };
 
 export function ToastProvider({ children }) {
@@ -141,7 +142,7 @@ export function ToastProvider({ children }) {
             <div
               key={t.id}
               className={cn(
-                "pointer-events-auto flex items-start gap-3 rounded-md border bg-surface p-4 shadow-lg animate-slide-in-right",
+                "pointer-events-auto flex items-start gap-3 rounded-lg border bg-surface-raised p-4 shadow-xl animate-slide-in-right",
                 cfg.ring,
               )}
               role="status"
@@ -170,12 +171,15 @@ export function useToast() {
 
 /* Small helper for pages that just want a body-scroll lock */
 export function useBodyScrollLock(active) {
+  const lenis = useLenis();
   useEffect(() => {
     if (!active) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    lenis?.stop();
     return () => {
       document.body.style.overflow = prev;
+      lenis?.start();
     };
-  }, [active]);
+  }, [active, lenis]);
 }

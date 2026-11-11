@@ -44,7 +44,7 @@ export default function AppReportDetail() {
                   <span
                     className={cn(
                       "inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold",
-                      isRejected ? "bg-scam text-white" : done ? "bg-legit text-white" : "bg-background-secondary text-muted-foreground",
+                      isRejected ? "bg-scam-strong text-white" : done ? "bg-legit text-legit-foreground" : "bg-background-secondary text-muted-foreground",
                     )}
                   >
                     {done ? (isRejected ? <Icons.IconClose className="h-4 w-4" /> : <Icons.IconCheck className="h-4 w-4" />) : i + 1}

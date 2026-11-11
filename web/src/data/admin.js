@@ -19,42 +19,53 @@ export const ADMIN_KPIS = {
   activeUsers: 2870,
 };
 
-// 14-day classification trend
-export const TREND_14D = Array.from({ length: 14 }).map((_, i) => {
-  const d = new Date();
-  d.setDate(d.getDate() - (13 - i));
-  const base = 900 + Math.round(Math.sin(i / 2) * 180);
-  return {
-    date: d.toISOString().slice(5, 10),
-    scam: Math.round(base * 0.4 + (i % 3) * 20),
-    spam: Math.round(base * 0.22 + (i % 4) * 12),
-    legit: Math.round(base * 0.38 + (i % 2) * 15),
-  };
-});
+// Daily classification series (sample data). Deterministic so the charts
+// look the same on every load. TREND_14D keeps older pages working.
+function makeTrend(days) {
+  return Array.from({ length: days }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (days - 1 - i));
+    const wave = Math.sin(i / 2.3) * 0.35 + Math.sin(i / 5.1) * 0.25;
+    const r = ((i * 9301 + 49297) % 233280) / 233280; // stable pseudo-random 0..1
+    const spike = (i * 7919) % 13 === 0 ? 0.5 : 0;
+    const base = 900 + Math.round(wave * 300);
+    return {
+      iso: d.toISOString().slice(0, 10),
+      date: d.toISOString().slice(5, 10),
+      label: d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
+      scam: Math.max(20, Math.round(base * (0.06 + 0.62 * r * r + spike))),
+      spam: Math.round(base * 0.22 + (i % 4) * 12),
+      legit: Math.round(base * 0.38 + (i % 2) * 15),
+    };
+  });
+}
+
+export const TREND_90D = makeTrend(90);
+export const TREND_14D = TREND_90D.slice(-14);
 
 export const LANGUAGE_DIST = [
-  { name: "English", value: 41, color: "#175CD3" },
-  { name: "Sinhala", value: 28, color: "#0E9384" },
-  { name: "Tamil", value: 16, color: "#6941C6" },
-  { name: "Singlish / mixed", value: 15, color: "#DC6803" },
+  { name: "English", value: 41, color: "#FF3B30" },
+  { name: "Sinhala", value: 28, color: "#D4D4D8" },
+  { name: "Tamil", value: 16, color: "#8C8C95" },
+  { name: "Singlish / mixed", value: 15, color: "#8E1A17" },
 ];
 
 export const CATEGORY_DIST = [
-  { name: "OTP fraud", value: 22, color: "#D92D20" },
-  { name: "Banking", value: 19, color: "#B42318" },
-  { name: "Lottery", value: 16, color: "#DC6803" },
-  { name: "Delivery", value: 12, color: "#F79009" },
-  { name: "Job / visa", value: 10, color: "#6941C6" },
-  { name: "Police", value: 8, color: "#0E9384" },
-  { name: "Other", value: 13, color: "#667085" },
+  { name: "OTP fraud", value: 22, color: "#FF3B30" },
+  { name: "Banking", value: 19, color: "#D4D4D8" },
+  { name: "Lottery", value: 16, color: "#A1A1AA" },
+  { name: "Delivery", value: 12, color: "#71717A" },
+  { name: "Job / visa", value: 10, color: "#8E1A17" },
+  { name: "Police", value: 8, color: "#52525B" },
+  { name: "Other", value: 13, color: "#3F3F46" },
 ];
 
 export const CONFIDENCE_DIST = [
-  { band: "50–60%", count: 640 },
-  { band: "60–70%", count: 1120 },
-  { band: "70–80%", count: 2410 },
-  { band: "80–90%", count: 4980 },
-  { band: "90–100%", count: 9282 },
+  { band: "50 to 60%", count: 640 },
+  { band: "60 to 70%", count: 1120 },
+  { band: "70 to 80%", count: 2410 },
+  { band: "80 to 90%", count: 4980 },
+  { band: "90 to 100%", count: 9282 },
 ];
 
 /* ── Dataset records ────────────────────────────────────────────── */
@@ -80,7 +91,7 @@ export const DATASET_RECORDS = Array.from({ length: 48 }).map((_, i) => {
     message: RAW_MESSAGES[k],
     label: LABELS[k],
     language: LANGS[k],
-    category: LABELS[k] === "legitimate" ? "—" : ["otp_fraud", "lottery_scam", "bank_transfer_scam", "delivery_scam"][i % 4],
+    category: LABELS[k] === "legitimate" ? "None" : ["otp_fraud", "lottery_scam", "bank_transfer_scam", "delivery_scam"][i % 4],
     source: SOURCES[k],
     annotated: i % 5 !== 0,
     addedAt: new Date(Date.now() - i * 36e5 * 9).toISOString().slice(0, 10),

@@ -4,20 +4,20 @@ import * as Icons from "../../components/icons.jsx";
 import { Card, Badge, SectionHeading } from "../../ui/index.js";
 
 const CONTRIBUTIONS = [
-  { icon: Icons.IconDatabase, title: "A real, labelled Sri Lankan dataset", text: "Scam SMS in Sinhala, Tamil, English, Singlish and code-mixed text — a resource that didn't exist before." },
+  { icon: Icons.IconDatabase, title: "A real, labelled Sri Lankan dataset", text: "Scam SMS in Sinhala, Tamil, English, Singlish and code-mixed text. A resource that didn't exist before." },
   { icon: Icons.IconWand, title: "Word-level explainability", text: "LIME + TF-IDF feature importance so every prediction is transparent, not a black box." },
   { icon: Icons.IconScale, title: "Baseline vs. transformer", text: "A lightweight TF-IDF baseline compared against multilingual BERT for this low-resource, code-mixed setting." },
 ];
 
 const STATUS = {
   serving: { label: "In use", tone: "legit" },
-  candidate: { label: "Candidate", tone: "primary" },
+  candidate: { label: "Candidate", tone: "warning" },
   baseline: { label: "Baseline", tone: "neutral" },
   compared: { label: "Compared, not used", tone: "info" },
   not_trained: { label: "Not trained yet", tone: "spam" },
 };
 
-const fmt = (x) => (x == null ? "—" : x.toFixed(2));
+const fmt = (x) => (x == null ? "n/a" : x.toFixed(2));
 
 export default function ResearchPage() {
   const d = RESULTS.dataset;
@@ -29,7 +29,7 @@ export default function ResearchPage() {
       <ContentHero
         eyebrow="Research & technology"
         title="The science behind ScamShield LK"
-        description="A final-year research project on detecting scam SMS in Sri Lanka's multilingual, code-mixed reality — and doing it explainably."
+        description="A final-year research project on detecting scam SMS in Sri Lanka's multilingual, code-mixed reality, and doing it explainably."
         icon={<Icons.IconBrain className="h-3.5 w-3.5" />}
       />
       <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
@@ -76,7 +76,7 @@ export default function ResearchPage() {
                           <td className="px-4 py-3 tabular-nums text-foreground">{fmt(m.real.recall)}</td>
                           <td className="px-4 py-3 tabular-nums text-foreground">
                             <span className="font-semibold">{fmt(m.real.f1)}</span>{" "}
-                            <span className="text-xs text-muted-foreground">({fmt(m.real.f1Ci95[0])}–{fmt(m.real.f1Ci95[1])})</span>
+                            <span className="text-xs text-muted-foreground">({fmt(m.real.f1Ci95[0])} to {fmt(m.real.f1Ci95[1])})</span>
                           </td>
                           <td className="px-4 py-3 tabular-nums text-foreground">{fmt(m.real.auc)}</td>
                         </>
@@ -93,7 +93,7 @@ export default function ResearchPage() {
             The models were trained on {d.syntheticTrain.toLocaleString()} AI-assisted synthetic messages built from{" "}
             {d.syntheticTemplates} templates, and no real messages. With only {d.realTest} real test messages the results
             are uncertain, so each F1 score is shown with its 95% range. When some real messages were added to training,
-            F1 rose to about {cv.map(fmt).join("–")} in cross-validation. mBERT reached the highest score on the synthetic
+            F1 rose to about {cv.map(fmt).join(" to ")} in cross-validation. mBERT reached the highest score on the synthetic
             test set{mbert?.synthetic ? ` (macro-F1 ${fmt(mbert.synthetic.macroF1)})` : ""} but the lowest of the trained models on
             real messages, a sign that it learned the synthetic templates rather than how real scams read. Measured on
             {RESULTS.evaluatedOn}.

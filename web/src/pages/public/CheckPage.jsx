@@ -6,6 +6,7 @@ import { sendFeedback } from "../../lib/api.js";
 import { SCAM_CATEGORIES } from "../../data/scamCategories.js";
 import { Badge, Card, useToast } from "../../ui/index.js";
 import { IconShieldCheck, IconGlobe, IconWand, IconLock } from "../../components/icons.jsx";
+import { useScrollIntoView } from "../../components/SmoothScroll.jsx";
 
 const ASSURANCES = [
   { icon: IconGlobe, title: "Multilingual", text: "Sinhala, Tamil, English, Singlish & code-mixed." },
@@ -16,11 +17,12 @@ const ASSURANCES = [
 export default function CheckPage() {
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
+  const scrollIntoView = useScrollIntoView();
   const { toast } = useToast();
 
   const onResult = (r) => {
     setResult(r);
-    requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    requestAnimationFrame(() => scrollIntoView(resultRef.current));
   };
 
   const onFeedback = async (correct) => {
@@ -28,7 +30,7 @@ export default function CheckPage() {
       if (result?.classificationId != null) await sendFeedback(result.classificationId, correct);
       toast({ tone: "success", title: "Feedback recorded", description: "Thanks for helping improve detection." });
     } catch {
-      toast({ tone: "success", title: "Feedback noted", description: "Saved locally — thank you." });
+      toast({ tone: "success", title: "Feedback noted", description: "Saved locally. Thank you." });
     }
   };
 
@@ -42,7 +44,7 @@ export default function CheckPage() {
           <h1 className="mt-4 text-display-sm text-foreground">Check a message</h1>
           <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-foreground-secondary">
             Paste any SMS you're unsure about. ScamShield LK tells you whether it looks like a scam, spam, or a
-            legitimate message — and highlights exactly why.
+            legitimate message, and highlights exactly why.
           </p>
         </div>
 

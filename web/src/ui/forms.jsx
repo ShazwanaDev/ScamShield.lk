@@ -27,14 +27,14 @@ export function Field({ label, htmlFor, hint, error, required, className, childr
 }
 
 const CONTROL_BASE =
-  "w-full rounded-md border bg-surface text-foreground placeholder:text-muted-foreground " +
-  "transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/40 " +
-  "disabled:cursor-not-allowed disabled:bg-background-secondary disabled:text-muted-foreground";
+  "w-full rounded-md border bg-black/30 text-foreground placeholder:text-muted-foreground/80 " +
+  "transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/15 " +
+  "disabled:cursor-not-allowed disabled:bg-white/[0.02] disabled:text-muted-foreground";
 
 function controlState(error) {
   return error
     ? "border-scam focus-visible:border-scam focus-visible:ring-scam/20"
-    : "border-border focus-visible:border-primary";
+    : "border-white/[0.09] hover:border-white/[0.16] focus-visible:border-primary/70";
 }
 
 /* ── Input ──────────────────────────────────────────────────────── */
@@ -152,7 +152,7 @@ export function RadioCard({ label, hint, checked, name, value, onChange, icon, c
     <label
       className={cn(
         "flex cursor-pointer items-start gap-3 rounded-md border p-3.5 transition",
-        checked ? "border-primary bg-primary/5 ring-1 ring-primary/30" : "border-border hover:border-border-strong hover:bg-background-secondary",
+        checked ? "border-primary/60 bg-primary/[0.07] ring-1 ring-primary/30" : "border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.03]",
         className,
       )}
     >
@@ -198,7 +198,7 @@ export function Switch({ checked, onChange, label, hint, id, disabled }) {
         onClick={() => onChange?.(!checked)}
         className={cn(
           "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/40 disabled:opacity-50",
-          checked ? "bg-primary" : "bg-border-strong",
+          checked ? "bg-primary-strong" : "bg-white/[0.12]",
         )}
       >
         <span
@@ -218,7 +218,7 @@ export function SegmentedControl({ options, value, onChange, className, size = "
   return (
     <div
       role="tablist"
-      className={cn("inline-flex flex-wrap items-center gap-1 rounded-md border border-border bg-background-secondary p-1", className)}
+      className={cn("inline-flex flex-wrap items-center gap-0.5 rounded-md border border-white/[0.08] bg-black/30 p-0.5", className)}
     >
       {options.map((opt) => {
         const active = opt.value === value;
@@ -231,13 +231,13 @@ export function SegmentedControl({ options, value, onChange, className, size = "
             className={cn(
               "inline-flex items-center gap-1.5 rounded font-semibold transition",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm",
-              active ? "bg-surface text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground",
+              active ? "bg-white/[0.08] text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]" : "text-muted-foreground hover:text-foreground",
             )}
           >
             {opt.icon}
             {opt.label}
             {opt.count != null && (
-              <span className={cn("rounded-full px-1.5 text-[11px]", active ? "bg-primary/10 text-primary" : "bg-border/60 text-muted-foreground")}>
+              <span className={cn("rounded px-1.5 font-mono text-[11px]", active ? "bg-primary/15 text-primary-soft" : "bg-white/[0.06] text-muted-foreground")}>
                 {opt.count}
               </span>
             )}

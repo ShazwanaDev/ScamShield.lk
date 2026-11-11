@@ -21,8 +21,8 @@ export const VERDICTS = {
     text: "text-scam",
     bg: "bg-scam-light",
     ring: "ring-scam/25",
-    solid: "bg-scam text-white",
-    accent: "#D92D20",
+    solid: "bg-gradient-cta text-white shadow-glow-sm",
+    accent: "#FF4F45",
     blurb: "This message shows strong signs of a scam. Do not click links, share codes, or send money.",
   },
   spam: {
@@ -33,8 +33,8 @@ export const VERDICTS = {
     text: "text-spam",
     bg: "bg-spam-light",
     ring: "ring-warning/30",
-    solid: "bg-spam text-white",
-    accent: "#DC6803",
+    solid: "bg-spam text-spam-foreground",
+    accent: "#F5A524",
     blurb: "This looks like unsolicited promotional or bulk messaging rather than a targeted scam.",
   },
   legitimate: {
@@ -45,9 +45,9 @@ export const VERDICTS = {
     text: "text-legit",
     bg: "bg-legit-light",
     ring: "ring-legit/25",
-    solid: "bg-legit text-white",
-    accent: "#079455",
-    blurb: "No strong scam signals detected. Stay cautious — always verify unexpected requests independently.",
+    solid: "bg-legit text-legit-foreground",
+    accent: "#3DD68C",
+    blurb: "No strong scam signals detected. Stay cautious and always verify unexpected requests independently.",
   },
   low: {
     label: "Low confidence",
@@ -57,8 +57,8 @@ export const VERDICTS = {
     text: "text-spam",
     bg: "bg-warning-light",
     ring: "ring-warning/30",
-    solid: "bg-warning text-foreground",
-    accent: "#F79009",
+    solid: "bg-warning text-warning-foreground",
+    accent: "#F5B740",
     blurb: "The model isn't confident about this one. Treat it with caution and verify through official channels.",
   },
 };
@@ -79,7 +79,7 @@ export function VerdictBadge({ verdict = "scam", confidence, size = "md", classN
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full font-bold ring-1 ring-inset",
+        "inline-flex items-center gap-1.5 rounded-md font-semibold ring-1 ring-inset",
         v.bg,
         v.text,
         v.ring,
@@ -96,7 +96,7 @@ export function VerdictBadge({ verdict = "scam", confidence, size = "md", classN
 
 /* ── Confidence meter (radial) ──────────────────────────────────── */
 
-export function ConfidenceRing({ value = 0, accent = "#175CD3", size = 120, stroke = 10, label = "confidence" }) {
+export function ConfidenceRing({ value = 0, accent = "#FF3B30", size = 120, stroke = 10, label = "confidence" }) {
   const pct = Math.max(0, Math.min(100, Math.round(value * 100)));
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -104,7 +104,7 @@ export function ConfidenceRing({ value = 0, accent = "#175CD3", size = 120, stro
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90" role="img" aria-label={`${pct}% ${label}`}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EEF2F6" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#232328" strokeWidth={stroke} />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -119,7 +119,7 @@ export function ConfidenceRing({ value = 0, accent = "#175CD3", size = 120, stro
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-2xl font-bold tabular-nums text-foreground">{pct}%</span>
+        <span className="figure text-2xl font-semibold text-foreground">{pct}%</span>
         <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
       </div>
     </div>
@@ -128,7 +128,7 @@ export function ConfidenceRing({ value = 0, accent = "#175CD3", size = 120, stro
 
 /* ── Confidence bar (linear, labelled) ──────────────────────────── */
 
-export function ConfidenceBar({ value = 0, accent = "#175CD3", className }) {
+export function ConfidenceBar({ value = 0, accent = "#FF3B30", className }) {
   const pct = Math.max(0, Math.min(100, Math.round(value * 100)));
   return (
     <div className={className}>
@@ -136,7 +136,7 @@ export function ConfidenceBar({ value = 0, accent = "#175CD3", className }) {
         <span className="text-muted-foreground">Model confidence</span>
         <span className="tabular-nums text-foreground">{pct}%</span>
       </div>
-      <div className="h-2.5 w-full overflow-hidden rounded-full bg-background-secondary">
+      <div className="h-2.5 w-full overflow-hidden rounded-full bg-cell">
         <div
           className="h-full rounded-full transition-[width] duration-700 ease-out"
           style={{ width: `${pct}%`, backgroundColor: accent }}

@@ -7,7 +7,7 @@ function StatusScreen({ code, icon, tone = "primary", title, description, action
     primary: "bg-primary/10 text-primary",
     scam: "bg-scam-light text-scam",
     spam: "bg-spam-light text-spam",
-    navy: "bg-navy/10 text-navy",
+    navy: "bg-white/[0.05] text-foreground-secondary ring-1 ring-inset ring-white/10",
   };
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-16">
@@ -52,7 +52,7 @@ export function ServerErrorPage() {
       tone="scam"
       icon={<Icons.IconServer className="h-8 w-8" />}
       title="Something went wrong on our end"
-      description="An unexpected error occurred. Please try again in a moment — if it keeps happening, let us know."
+      description="An unexpected error occurred. Please try again in a moment. If it keeps happening, let us know."
       actions={
         <>
           <Button onClick={() => window.location.reload()} leftIcon={<Icons.IconRefresh className="h-4 w-4" />}>
@@ -73,7 +73,7 @@ export function MaintenancePage() {
       tone="spam"
       icon={<Icons.IconSettings className="h-8 w-8" />}
       title="Down for maintenance"
-      description="ScamShield LK is briefly offline for an upgrade. We'll be back shortly — thanks for your patience."
+      description="ScamShield LK is briefly offline for an upgrade. We'll be back shortly. Thanks for your patience."
       actions={
         <Button onClick={() => window.location.reload()} leftIcon={<Icons.IconRefresh className="h-4 w-4" />}>
           Try again

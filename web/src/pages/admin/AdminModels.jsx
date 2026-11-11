@@ -1,17 +1,16 @@
 import RESULTS from "../../data/modelResults.json";
-import { ComparisonLineChart } from "../../ui/charts.jsx";
-import { PageHeader, Card, CardHeader, CardTitle, CardContent, DataTable, Badge, Alert, cn } from "../../ui/index.js";
+import { PageHeader, Card, CardHeader, CardTitle, CardContent, DataTable, Badge, Alert, CellBarRow, cn } from "../../ui/index.js";
 import * as Icons from "../../components/icons.jsx";
 
 const STATUS = {
   serving: { label: "In use", tone: "legit" },
-  candidate: { label: "Candidate", tone: "primary" },
+  candidate: { label: "Candidate", tone: "warning" },
   baseline: { label: "Baseline", tone: "neutral" },
   compared: { label: "Compared, not used", tone: "info" },
   not_trained: { label: "Not trained yet", tone: "spam" },
 };
 
-const fmt = (x) => (x == null ? "—" : x.toFixed(2));
+const fmt = (x) => (x == null ? "n/a" : x.toFixed(2));
 
 export default function AdminModels() {
   const d = RESULTS.dataset;
@@ -36,7 +35,7 @@ export default function AdminModels() {
     { key: "auc", header: "AUC (real)", align: "right", cell: (m) => <span className="tabular-nums">{fmt(m.real?.auc)}</span> },
     { key: "synth", header: "Macro-F1 (synthetic, 3 labels)", align: "right", cell: (m) => <span className="tabular-nums">{fmt(m.synthetic?.macroF1)}</span> },
     { key: "cv", header: "F1 with real data in training", align: "right", cell: (m) => (
-      <span className="tabular-nums">{m.realCv ? `${fmt(m.realCv.f1Mean)} ± ${fmt(m.realCv.f1Std)}` : "—"}</span>
+      <span className="tabular-nums">{m.realCv ? `${fmt(m.realCv.f1Mean)} ± ${fmt(m.realCv.f1Std)}` : "n/a"}</span>
     ) },
   ];
 
@@ -80,16 +79,19 @@ export default function AdminModels() {
       <Card>
         <CardHeader><CardTitle>Real-message comparison</CardTitle><Badge tone="neutral" size="sm">scam vs not-scam</Badge></CardHeader>
         <CardContent>
-          <ComparisonLineChart
-            data={comparison}
-            domain={[0, 1]}
-            keys={[
-              { dataKey: "precision", name: "Precision", color: "#175CD3" },
-              { dataKey: "recall", name: "Recall", color: "#0E9384" },
-              { dataKey: "f1", name: "F1", color: "#6941C6" },
-            ]}
-          />
-          <p className="mt-2 text-xs text-muted-foreground">
+          <div className="grid gap-x-10 gap-y-6 lg:grid-cols-2">
+            {comparison.map((m) => (
+              <div key={m.label}>
+                <p className="mb-2.5 text-sm font-medium text-foreground">{m.label}</p>
+                <div className="space-y-1.5">
+                  <CellBarRow label="Precision" value={m.precision} max={1} cells={28} tone="light" display={fmt(m.precision)} />
+                  <CellBarRow label="Recall" value={m.recall} max={1} cells={28} tone="red" display={fmt(m.recall)} />
+                  <CellBarRow label="F1" value={m.f1} max={1} cells={28} tone="deep" display={fmt(m.f1)} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-xs text-muted-foreground">
             Summary: both TF-IDF models catch far more real scams than the keyword list, but flag many genuine messages too
             (precision about {fmt(trained.find((m) => m.id === "logreg")?.real.precision)}). mBERT catches fewer real scams
             and flags more genuine messages than either, despite the best synthetic-test score.

@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setError(null);
     setBusy(true);
     try {
-      await register(email, password);
+      await register(email, password, name);
       navigate("/account-created");
     } catch (err) {
       setError(err?.message || "Couldn't create your account. Please try again.");
@@ -42,7 +42,7 @@ export default function RegisterPage() {
   return (
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Create your account</h1>
-      <p className="mt-1.5 text-sm text-muted-foreground">Sync your checks and reports across devices — free.</p>
+      <p className="mt-1.5 text-sm text-muted-foreground">Sync your checks and reports across devices, free.</p>
 
       <form onSubmit={submit} className="mt-7 space-y-4">
         {error && <Alert tone="error">{error}</Alert>}
