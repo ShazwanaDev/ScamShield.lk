@@ -166,7 +166,7 @@ class _DetailBody extends ConsumerWidget {
                 HapticFeedback.mediumImpact();
                 ref.read(historyProvider.notifier).setFeedback(entry.id, 'incorrect');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Thanks — flagged as incorrect.')),
+                  const SnackBar(content: Text('Thanks. Flagged as incorrect.')),
                 );
               },
               icon: const Icon(Icons.flag_outlined, size: 18),

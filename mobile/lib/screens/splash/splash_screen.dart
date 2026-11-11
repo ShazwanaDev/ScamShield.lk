@@ -38,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     final connectivity = await Connectivity().checkConnectivity();
     final isOnline = !connectivity.contains(ConnectivityResult.none);
 
-    setState(() => _status = isOnline ? 'Online — using live model' : 'Offline — loading on-device model…');
+    setState(() => _status = isOnline ? 'Online. Using the live model' : 'Offline. Loading the on-device model…');
     if (!isOnline) {
       await OfflineModelService.warmUp();
     }
@@ -81,10 +81,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.navy, AppColors.navyDeep],
+          gradient: RadialGradient(
+            center: Alignment(0, -0.35),
+            radius: 1.1,
+            colors: [Color(0xFF6A0E13), Color(0xFF2A0A0C), AppColors.background],
+            stops: [0, 0.45, 1],
           ),
         ),
         child: Center(

@@ -72,7 +72,7 @@ class _FeedbackButtonsState extends State<FeedbackButtons> {
         if (_status == FeedbackStatus.error)
           const Padding(
             padding: EdgeInsets.only(top: 6),
-            child: Text("Couldn't save that — try again.", style: TextStyle(color: AppColors.danger, fontSize: 12)),
+            child: Text("Couldn't save that. Please try again.", style: TextStyle(color: AppColors.danger, fontSize: 12)),
           ),
       ],
     );

@@ -77,7 +77,7 @@ class ArticleDetailScreen extends StatelessWidget {
                     onPressed: () => context.go('/home'),
                     icon: const Icon(Icons.shield_rounded, size: 18),
                     label: const Text('Check a message'),
-                    style: FilledButton.styleFrom(backgroundColor: AppColors.teal, foregroundColor: Colors.white),
+                    style: FilledButton.styleFrom(backgroundColor: AppColors.brandFill, foregroundColor: Colors.white),
                   ),
                 ],
               ),

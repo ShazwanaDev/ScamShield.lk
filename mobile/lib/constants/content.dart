@@ -146,14 +146,14 @@ const List<Article> kArticles = [
     title: 'How to spot a scam SMS in 10 seconds',
     category: 'Basics',
     readMins: 4,
-    excerpt: 'Four quick checks — urgency, unexpected rewards, requests for codes or money, and unofficial links.',
+    excerpt: 'Four quick checks: urgency, unexpected rewards, requests for codes or money, and unofficial links.',
     sections: [
       ArticleSection(
         heading: 'The 10-second checklist',
         body: ['Most scam SMS share the same DNA. Before you tap anything, run these four checks:'],
         bullets: [
-          "Urgency — 'act within 2 hours', 'account will be blocked today'.",
-          'Unexpected reward or problem — a prize you never entered, or a parcel you never ordered.',
+          "Urgency: 'act within 2 hours', 'account will be blocked today'.",
+          'Unexpected reward or problem: a prize you never entered, or a parcel you never ordered.',
           'A request for a code, PIN, password, NIC, or money.',
           "A link or number that isn't your provider's official one.",
         ],
@@ -177,7 +177,7 @@ const List<Article> kArticles = [
       ArticleSection(
         heading: 'What an OTP actually does',
         body: [
-          'A one-time password authorises a specific action — a login, a transfer, a card registration.',
+          'A one-time password authorises a specific action: a login, a transfer, a card registration.',
           "That's why sharing it is exactly like handing over the transaction itself.",
         ],
       ),
@@ -201,7 +201,7 @@ const List<Article> kArticles = [
         heading: 'Why language matters',
         body: [
           "A message like 'Free 10GB, dan-ma activate karanna' blends English and romanised Sinhala.",
-          'ScamShield LK is built for exactly this — Sinhala, Tamil, English, Singlish and code-mixed text.',
+          'ScamShield LK is built for exactly this: Sinhala, Tamil, English, Singlish and code-mixed text.',
         ],
       ),
       ArticleSection(
@@ -262,19 +262,19 @@ const List<QuizQuestion> kQuiz = [
     text: 'සුභ පැතුම්! ඔබ රු. 2,000,000ක් දිනා ඇත. ත්‍යාගය ලබා ගැනීමට රු. 5,000ක reload එකක් එවන්න.',
     lang: 'si',
     answer: 'scam',
-    explanation: "A prize you never entered, plus an upfront reload to 'claim' it — a classic lottery scam.",
+    explanation: "A prize you never entered, plus an upfront reload to 'claim' it. A classic lottery scam.",
   ),
   QuizQuestion(
     text: 'FREE 10GB data! Dial *123*99# eka dapan activate karanna. Limited time offer!',
     lang: 'mixed',
     answer: 'spam',
-    explanation: "Unsolicited promo bait. Dialling the code can activate a paid service — treat as spam, don't engage.",
+    explanation: "Unsolicited promo bait. Dialling the code can activate a paid service. Treat it as spam and don't engage.",
   ),
   QuizQuestion(
     text: '123456 is your verification code. For your security, do not share this code with anyone, including bank staff.',
     lang: 'en',
     answer: 'legitimate',
-    explanation: 'A genuine OTP message tells YOU the code and warns you not to share it — it never asks you to send it back.',
+    explanation: 'A genuine OTP message tells YOU the code and warns you not to share it. It never asks you to send it back.',
   ),
 ];
 

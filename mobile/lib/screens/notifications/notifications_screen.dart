@@ -12,7 +12,7 @@ import '../../theme/app_theme.dart';
     case 'feedback':
       return (icon: Icons.thumb_up_rounded, fg: AppColors.legit, bg: AppColors.legitBg);
     case 'awareness':
-      return (icon: Icons.menu_book_rounded, fg: AppColors.info, bg: const Color(0xFFEBE9FE));
+      return (icon: Icons.menu_book_rounded, fg: AppColors.info, bg: AppColors.infoBg);
     default:
       return (icon: Icons.settings_rounded, fg: AppColors.onSurfaceMuted, bg: AppColors.surfaceMuted);
   }

@@ -11,7 +11,7 @@ const _pages = [
     icon: Icons.translate_rounded,
     title: 'Built for Sri Lanka\'s SMS reality',
     description:
-        'Detects scams written in Sinhala, Tamil, English, or mixed "Singlish" — not just clean English text.',
+        'Detects scams written in Sinhala, Tamil, English, or mixed "Singlish", not just clean English text.',
   ),
   OnboardingPageData(
     icon: Icons.visibility_rounded,
@@ -23,7 +23,7 @@ const _pages = [
     icon: Icons.groups_rounded,
     title: 'Report scams the community can act on',
     description:
-        'Flag a suspicious message and a moderator reviews it — helping build a public, up-to-date picture of what\'s circulating.',
+        'Flag a suspicious message and a moderator reviews it, helping build a public, up-to-date picture of what\'s circulating.',
   ),
 ];
 
@@ -57,7 +57,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      // Red glow behind the onboarding art, as in the mobile mockups.
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.3),
+            radius: 0.95,
+            colors: [Color(0xFF4A0A0E), Color(0xFF1A0809), AppColors.background],
+            stops: [0, 0.5, 1],
+          ),
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             Align(
@@ -116,6 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

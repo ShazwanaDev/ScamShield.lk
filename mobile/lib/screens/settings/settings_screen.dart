@@ -28,7 +28,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!mounted) return;
     setState(() => _syncing = false);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(flushed > 0 ? 'Synced $flushed queued report(s).' : 'Nothing to sync — all caught up.')),
+      SnackBar(content: Text(flushed > 0 ? 'Synced $flushed queued report(s).' : 'Nothing to sync. All caught up.')),
     );
   }
 
@@ -165,7 +165,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.person_outline_rounded),
-                    title: Text(auth.user?.isGuest == true ? 'Guest' : (auth.user?.email ?? '—')),
+                    title: Text(auth.user?.isGuest == true ? 'Guest' : (auth.user?.email ?? 'Account')),
                     subtitle: const Text('View profile'),
                     onTap: () => context.push('/profile'),
                   ),

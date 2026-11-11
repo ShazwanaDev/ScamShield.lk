@@ -138,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Guest mode stays on this device only — no sync across devices.',
+                    'Guest mode stays on this device only, with no sync across devices.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppColors.onSurfaceMuted, fontSize: 11.5),
                   ),
