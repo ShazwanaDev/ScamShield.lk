@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { adminSignIn, adminSignOut, getAdminToken, mockLogin, mockRegister } from "../lib/api.js";
+import { demoProfile, seedDemoAccount } from "../data/demoAccount.js";
 
 const USER_KEY = "scamshield_mock_user";
 
@@ -8,7 +9,10 @@ const AuthContext = createContext(null);
 function readUser() {
   try {
     const raw = localStorage.getItem(USER_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const user = raw ? JSON.parse(raw) : null;
+    // Returning demo account: make sure its sample data is there before the first render.
+    if (user?.email) seedDemoAccount(user.email);
+    return user;
   } catch {
     return null;
   }
@@ -25,14 +29,17 @@ export function AuthProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(() => Boolean(getAdminToken()));
 
   const login = useCallback(async (email, password) => {
-    const account = await mockLogin(email, password);
+    const account = { ...(await mockLogin(email, password)), ...demoProfile(email) };
+    seedDemoAccount(account.email);
     localStorage.setItem(USER_KEY, JSON.stringify(account));
     setUser(account);
     return account;
   }, []);
 
-  const register = useCallback(async (email, password) => {
-    const account = await mockRegister(email, password);
+  const register = useCallback(async (email, password, name) => {
+    const trimmed = String(name || "").trim();
+    const account = { ...(await mockRegister(email, password)), ...(trimmed ? { name: trimmed } : {}), ...demoProfile(email) };
+    seedDemoAccount(account.email);
     localStorage.setItem(USER_KEY, JSON.stringify(account));
     setUser(account);
     return account;
