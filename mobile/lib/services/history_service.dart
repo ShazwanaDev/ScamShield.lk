@@ -15,6 +15,18 @@ class HistoryService {
     await prefs.setStringList(_key, existing);
   }
 
+  /// Add several entries at once (used by the demo account), newest first.
+  /// Entries whose id is already stored are skipped.
+  static Future<void> importEntries(List<HistoryEntry> entries) async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = prefs.getStringList(_key) ?? [];
+    final all = existing.map((e) => HistoryEntry.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
+    final ids = all.map((e) => e.id).toSet();
+    all.addAll(entries.where((e) => !ids.contains(e.id)));
+    all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    await prefs.setStringList(_key, all.map((e) => jsonEncode(e.toJson())).toList());
+  }
+
   static Future<List<HistoryEntry>> load() async {
     final prefs = await SharedPreferences.getInstance();
     final existing = prefs.getStringList(_key) ?? [];

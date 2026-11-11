@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/app_user.dart';
+import 'demo_data.dart';
 
 /// Mock auth — the backend has no /api/login or /api/register yet (see
 /// backend/routes/), so this simulates a JWT-style session entirely on
@@ -22,7 +23,8 @@ class AuthService {
     if (password.length < 6) {
       throw AuthException('Incorrect email or password.');
     }
-    final user = AppUser(email: email, token: _generateToken());
+    final user = AppUser(email: email, token: _generateToken(), displayName: DemoData.displayNameFor(email));
+    await DemoData.seedIfNeeded(email);
     await _persist(user);
     return user;
   }
@@ -35,7 +37,8 @@ class AuthService {
     if (password.length < 6) {
       throw AuthException('Password must be at least 6 characters.');
     }
-    final user = AppUser(email: email, token: _generateToken(), displayName: displayName);
+    final user = AppUser(email: email, token: _generateToken(), displayName: DemoData.displayNameFor(email) ?? displayName);
+    await DemoData.seedIfNeeded(email);
     await _persist(user);
     return user;
   }
@@ -52,7 +55,10 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_sessionKey);
     if (raw == null) return null;
-    return AppUser.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final user = AppUser.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    // A returning demo account picks up any demo data added since it last signed in.
+    await DemoData.seedIfNeeded(user.email);
+    return user;
   }
 
   static Future<void> logout() async {
