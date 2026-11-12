@@ -126,11 +126,16 @@ def predict():
 
 @classify_bp.post("/feedback/<int:classification_id>")
 def feedback(classification_id):
-    payload = request.get_json(force=True)
-    is_correct = payload.get("correct")
+    payload = request.get_json(force=True, silent=True)
+    # Only a real true/false counts: a missing or misspelt field must not quietly
+    # record "incorrect" against a result.
+    if not isinstance(payload, dict) or not isinstance(payload.get("correct"), bool):
+        return jsonify({"error": "send a JSON object with 'correct' set to true or false"}), 400
 
-    record = ClassifiedMessage.query.get_or_404(classification_id)
-    record.user_feedback = "correct" if is_correct else "incorrect"
+    record = db.session.get(ClassifiedMessage, classification_id)
+    if record is None:
+        return jsonify({"error": "classification not found"}), 404
+    record.user_feedback = "correct" if payload["correct"] else "incorrect"
     db.session.commit()
 
     return jsonify({"status": "recorded"})
