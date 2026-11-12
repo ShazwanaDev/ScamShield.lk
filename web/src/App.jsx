@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth.jsx";
 import { ToastProvider, Spinner } from "./ui/index.js";
 import SmoothScroll from "./components/SmoothScroll.jsx";
+import ReportQueueSync from "./components/ReportQueueSync.jsx";
 
 import PublicLayout from "./layouts/PublicLayout.jsx";
 import AuthLayout from "./layouts/AuthLayout.jsx";
@@ -68,6 +69,7 @@ export default function App() {
       <SmoothScroll />
       <AuthProvider>
         <ToastProvider>
+          <ReportQueueSync />
           <Routes>
             {/* Public site */}
             <Route element={<PublicLayout />}>

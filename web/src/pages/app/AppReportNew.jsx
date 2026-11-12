@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.jsx";
-import { submitReport, REPORT_CATEGORIES, REPORT_LANGUAGES } from "../../lib/api.js";
+import { submitReport, REPORT_CATEGORIES, REPORT_LANGUAGES, ApiError } from "../../lib/api.js";
 import { addMyReport } from "../../lib/myReports.js";
+import { queueReport } from "../../lib/reportQueue.js";
 import { Breadcrumbs, Card, Button, Field, Textarea, Select, Alert, useToast } from "../../ui/index.js";
 import { IconSend } from "../../components/icons.jsx";
 
@@ -23,13 +24,28 @@ export default function AppReportNew() {
     if (!message.trim()) return setError("Please paste the message you want to report.");
     setError(null);
     setBusy(true);
-    // Record it in the user's reports regardless of backend reachability.
-    const entry = addMyReport(user?.email, { message: message.trim(), category, language });
+    const report = { message: message.trim(), category, language };
     try {
-      await submitReport(message.trim(), category || undefined, language || undefined);
-    } catch {
-      /* offline / no backend — kept locally, would sync later */
+      await submitReport(report.message, category || undefined, language || undefined);
+    } catch (err) {
+      if (!(err instanceof ApiError && err.status === 0)) {
+        // The server refused it (for example an invalid message): say so and keep the form.
+        setBusy(false);
+        setError(err?.message || "Something went wrong. Please try again.");
+        return;
+      }
+      // Server unreachable: keep it in this browser and send it when the connection is back.
+      const entry = addMyReport(user?.email, { ...report, status: "queued" });
+      if (!queueReport({ ...report, email: user?.email, myReportId: entry.id })) {
+        setBusy(false);
+        setError("We couldn't reach the server, and this browser won't let us save the report. Please try again later.");
+        return;
+      }
+      toast({ tone: "warning", title: "Saved on this device", description: "It will be sent automatically when you're back online." });
+      navigate(`/app/reports/${entry.id}`);
+      return;
     }
+    const entry = addMyReport(user?.email, report);
     toast({ tone: "success", title: "Report submitted", description: "A moderator will review it shortly." });
     navigate(`/app/reports/${entry.id}`);
   };

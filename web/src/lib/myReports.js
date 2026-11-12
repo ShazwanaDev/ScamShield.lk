@@ -53,23 +53,43 @@ export function getMyReport(email, id) {
   return read(email).find((r) => String(r.id) === String(id)) || null;
 }
 
-export function addMyReport(email, { message, category, language }) {
+const QUEUED_NOTE = "Saved on this device. It will be sent when you're back online.";
+const PENDING_NOTE = "Awaiting moderator review.";
+
+export function addMyReport(email, { message, category, language, status = "pending" }) {
   const entries = read(email);
   const entry = {
     id: `SR-${5900 + Math.floor(Math.random() * 900)}`,
     message,
     category: category || null,
     language: language || null,
-    status: "pending",
+    status,
     submittedAt: new Date().toISOString(),
-    note: "Awaiting moderator review.",
+    note: status === "queued" ? QUEUED_NOTE : PENDING_NOTE,
   };
   entries.push(entry);
-  localStorage.setItem(keyFor(email), JSON.stringify(entries));
+  try {
+    localStorage.setItem(keyFor(email), JSON.stringify(entries));
+  } catch {
+    /* storage blocked: the entry just won't be listed */
+  }
   return entry;
 }
 
+/** A queued report reached the server: it now waits for a moderator like any other. */
+export function markMyReportSent(email, id) {
+  try {
+    const entries = read(email).map((r) =>
+      String(r.id) === String(id) ? { ...r, status: "pending", note: PENDING_NOTE } : r,
+    );
+    localStorage.setItem(keyFor(email), JSON.stringify(entries));
+  } catch {
+    /* storage blocked: nothing to update */
+  }
+}
+
 export const REPORT_STATUS = {
+  queued: { label: "Waiting to send", tone: "neutral" },
   pending: { label: "Pending review", tone: "spam" },
   approved: { label: "Approved", tone: "legit" },
   rejected: { label: "Rejected", tone: "scam" },

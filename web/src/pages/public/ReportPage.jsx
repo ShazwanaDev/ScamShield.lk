@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import ContentHero from "../../components/public/ContentHero.jsx";
 import { submitReport, REPORT_CATEGORIES, REPORT_LANGUAGES, ApiError } from "../../lib/api.js";
+import { queueReport } from "../../lib/reportQueue.js";
 import * as Icons from "../../components/icons.jsx";
 import { Card, Button, Field, Textarea, Select, Alert, Badge, cn } from "../../ui/index.js";
 
@@ -23,9 +24,15 @@ export default function ReportPage() {
       await submitReport(message.trim(), category || undefined, language || undefined);
       setStatus("done");
     } catch (err) {
-      // Network/unreachable → treat as queued (honest: a real client queues it).
-      if (err instanceof ApiError && err.status === 0) setStatus("queued");
-      else {
+      // Server unreachable: keep the report in this browser and send it once the connection is back.
+      if (err instanceof ApiError && err.status === 0) {
+        if (queueReport({ message: message.trim(), category, language })) {
+          setStatus("queued");
+        } else {
+          setStatus("error");
+          setError("We couldn't reach the server, and this browser won't let us save the report. Please try again later.");
+        }
+      } else {
         setStatus("error");
         setError(err?.message || "Something went wrong. Please try again.");
       }
@@ -51,11 +58,11 @@ export default function ReportPage() {
               {queued ? <Icons.IconClock className="h-8 w-8" /> : <Icons.IconCheckCircle className="h-8 w-8" />}
             </span>
             <h2 className="mt-5 text-2xl font-extrabold text-foreground">
-              {queued ? "Saved. Will submit when online" : "Report submitted"}
+              {queued ? "Saved on this device" : "Report submitted"}
             </h2>
             <p className="mt-2 text-foreground-secondary">
               {queued
-                ? "You appear to be offline. Your report is saved and will be sent automatically once you're back online."
+                ? "We couldn't reach the server, so your report is saved in this browser. It will be sent automatically once you're back online with ScamShield LK open here."
                 : "Thank you. A moderator will review it before it's counted toward public stats. Reports like yours help warn others."}
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
