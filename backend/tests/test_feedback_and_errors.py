@@ -1,4 +1,6 @@
-"""Feedback validation and JSON error responses."""
+"""Feedback validation, JSON error responses and the per-request log."""
+import logging
+
 import pytest
 
 from conftest import requires_model
@@ -67,6 +69,15 @@ def test_unexpected_error_is_a_json_500_without_internals(app, client):
     assert response.status_code == 500
     assert response.get_json() == {"error": "the server could not complete the request"}
     assert "hunter2" not in response.get_data(as_text=True)
+
+
+def test_each_request_is_logged_without_the_message(client, caplog):
+    secret_message = "Your OTP is 482913, share it with nobody"
+    with caplog.at_level(logging.INFO, logger="scamshield.api"):
+        client.post("/api/submit-sms", json={"message": secret_message})
+    lines = [r.getMessage() for r in caplog.records if r.name == "scamshield.api"]
+    assert any(line.startswith("POST /api/submit-sms 201 ") and line.endswith("ms") for line in lines)
+    assert all(secret_message not in line and "482913" not in line for line in lines)
 
 
 @requires_model

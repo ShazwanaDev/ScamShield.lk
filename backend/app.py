@@ -7,8 +7,10 @@ Run with:
 import logging
 import os
 import secrets
+import sys
+import time
 
-from flask import Flask, jsonify, request
+from flask import Flask, g, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.exceptions import HTTPException
@@ -20,6 +22,29 @@ from routes.community import community_bp
 
 migrate = Migrate()
 log = logging.getLogger("scamshield.api")
+
+
+def configure_logging():
+    """One line per request on stdout, which Docker keeps as the container log."""
+    if not log.handlers:
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+        log.addHandler(handler)
+    log.setLevel(logging.INFO)
+
+
+def register_request_logging(app):
+    @app.before_request
+    def start_timer():
+        g.started = time.perf_counter()
+
+    @app.after_request
+    def log_request(response):
+        # Method, path, status and time only. Request bodies are never logged,
+        # because they hold the messages people check and report.
+        elapsed_ms = (time.perf_counter() - g.get("started", time.perf_counter())) * 1000
+        log.info("%s %s %s %.1fms", request.method, request.path, response.status_code, elapsed_ms)
+        return response
 
 
 def register_error_handlers(app):
@@ -56,6 +81,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    configure_logging()
+    register_request_logging(app)
     register_error_handlers(app)
 
     app.register_blueprint(auth_bp, url_prefix="/api")
