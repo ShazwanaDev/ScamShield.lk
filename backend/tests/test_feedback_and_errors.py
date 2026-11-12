@@ -1,4 +1,4 @@
-"""Feedback validation and the JSON answer for an unknown classification."""
+"""Feedback validation and JSON error responses."""
 import pytest
 
 from conftest import requires_model
@@ -48,6 +48,25 @@ def test_unknown_classification_is_a_json_404(client):
     response = client.post("/api/feedback/999999", json={"correct": True})
     assert response.status_code == 404
     assert response.get_json() == {"error": "classification not found"}
+
+
+def test_unknown_route_and_wrong_method_answer_json(client):
+    for response in (client.get("/api/nowhere"), client.get("/api/predict")):
+        assert response.is_json
+        assert "error" in response.get_json()
+    assert client.get("/api/nowhere").status_code == 404
+    assert client.get("/api/predict").status_code == 405
+
+
+def test_unexpected_error_is_a_json_500_without_internals(app, client):
+    @app.get("/api/broken")
+    def broken():
+        raise RuntimeError("database password is hunter2")
+
+    response = client.get("/api/broken")
+    assert response.status_code == 500
+    assert response.get_json() == {"error": "the server could not complete the request"}
+    assert "hunter2" not in response.get_data(as_text=True)
 
 
 @requires_model

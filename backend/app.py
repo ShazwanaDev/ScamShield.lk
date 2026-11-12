@@ -4,11 +4,14 @@ ScamShield LK Flask backend entry point.
 Run with:
     flask --app app run --debug
 """
+import logging
 import os
 import secrets
-from flask import Flask, jsonify
+
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
+from werkzeug.exceptions import HTTPException
 
 from models.db import db
 from routes.auth import auth_bp
@@ -16,6 +19,23 @@ from routes.classify import classify_bp
 from routes.community import community_bp
 
 migrate = Migrate()
+log = logging.getLogger("scamshield.api")
+
+
+def register_error_handlers(app):
+    """Every error leaves the API as JSON, the same shape the routes use."""
+
+    @app.errorhandler(HTTPException)
+    def http_error(err):
+        return jsonify({"error": err.description}), err.code
+
+    @app.errorhandler(Exception)
+    def unexpected_error(err):
+        # Undo any half-finished database work, record the details for the
+        # developer, and give the client a short message without internals.
+        db.session.rollback()
+        log.exception("unhandled error on %s %s", request.method, request.path)
+        return jsonify({"error": "the server could not complete the request"}), 500
 
 
 def create_app():
@@ -35,6 +55,8 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+    register_error_handlers(app)
 
     app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(classify_bp, url_prefix="/api")
