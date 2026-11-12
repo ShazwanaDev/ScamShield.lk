@@ -9,6 +9,7 @@
  * User accounts are still a frontend mock (see lib/api.js): the password is
  * never stored or checked here. Phone numbers and links are safe placeholders.
  */
+import { notifyHistoryChanged } from "../lib/history.js";
 
 const DEMO_EMAIL = String(import.meta.env.VITE_DEMO_EMAIL || "").trim().toLowerCase();
 const DEMO_NAME = String(import.meta.env.VITE_DEMO_NAME || "").trim();
@@ -171,6 +172,7 @@ export function seedDemoAccount(email) {
     localStorage.setItem(REPORTS_PREFIX + key, JSON.stringify([...reports, ...demoReports]));
 
     localStorage.setItem(SEEDED_PREFIX + key, new Date().toISOString());
+    notifyHistoryChanged();
     return true;
   } catch {
     // Storage blocked (private mode, quota): the app still works, just without demo data.

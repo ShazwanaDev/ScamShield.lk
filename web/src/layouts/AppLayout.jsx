@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import PortalSidebar, { SidebarCard } from "../components/nav/PortalSidebar.jsx";
 import PortalTopbar from "../components/nav/PortalTopbar.jsx";
 import { APP_NAV } from "../components/nav/navConfig.jsx";
 import { useAuth } from "../hooks/useAuth.jsx";
-import { getHistory } from "../lib/history.js";
+import { getHistory, historySnapshot, subscribeHistory } from "../lib/history.js";
 import { resolveVerdict } from "../ui/verdict.jsx";
 import { Button, SegmentBar, cn } from "../ui/index.js";
 import { IconHome, IconShieldCheck, IconHistory, IconMegaphone, IconUser } from "../components/icons.jsx";
@@ -21,12 +21,14 @@ export default function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
 
-  // The user's own verdict mix, from the checks saved on this device.
+  // The user's own verdict mix, from the checks saved on this device. This layout stays mounted while
+  // other pages add or delete checks, so it subscribes to the stored history and recounts when it changes.
+  const storedHistory = useSyncExternalStore(subscribeHistory, () => historySnapshot(user?.email));
   const mix = useMemo(() => {
     const history = getHistory(user?.email);
     const count = (k) => history.filter((h) => resolveVerdict(h.label, h.confidence) === k).length;
     return { total: history.length, scam: count("scam"), spam: count("spam"), legit: count("legitimate"), low: count("low") };
-  }, [user]);
+  }, [user, storedHistory]);
 
   return (
     <div className="min-h-screen bg-background">
