@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ContentHero from "../../components/public/ContentHero.jsx";
 import { submitReport, REPORT_CATEGORIES, REPORT_LANGUAGES, ApiError } from "../../lib/api.js";
 import { queueReport } from "../../lib/reportQueue.js";
@@ -9,7 +9,9 @@ import { Card, Button, Field, Textarea, Select, Alert, Badge, cn } from "../../u
 const MAX = 1000;
 
 export default function ReportPage() {
-  const [message, setMessage] = useState("");
+  // Report this message on a result opens this page with the checked message already in the box.
+  const prefill = useLocation().state?.message;
+  const [message, setMessage] = useState(typeof prefill === "string" ? prefill.slice(0, MAX) : "");
   const [category, setCategory] = useState("");
   const [language, setLanguage] = useState("");
   const [status, setStatus] = useState("idle"); // idle | submitting | done | queued | error

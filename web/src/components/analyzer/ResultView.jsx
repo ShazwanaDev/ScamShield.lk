@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import HighlightedMessage from "./HighlightedMessage.jsx";
 import { CATEGORY_BY_SLUG } from "../../data/scamCategories.js";
 import { Button, Badge, Card, VERDICTS, TickGauge, SignalTrace, CellBarRow, cn } from "../../ui/index.js";
@@ -70,7 +70,12 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
   const [showExplain, setShowExplain] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const events = useMemo(() => (result ? traceEvents(result) : []), [result]);
+  // In the user portal, reporting lives under /app.
+  const inPortal = useLocation().pathname.startsWith("/app");
   if (!result) return null;
+  const reportTo = inPortal ? "/app/reports/new" : "/report";
+  // The report form opens with this message already filled in.
+  const reportState = { message: result.message };
 
   const v = VERDICTS[result.verdict] || VERDICTS.low;
   const Icon = v.Icon;
@@ -140,6 +145,14 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
             thresholdLabel="Floor"
             accent={v.accent}
           />
+          {/* Usability testing: reporting was one of the hardest things to find. */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {result.verdict !== "legitimate" && (
+              <Button as={Link} to={reportTo} state={reportState} variant="danger" size="sm" leftIcon={<IconFlag className="h-4 w-4" />}>
+                Report this message
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Meta strip */}
@@ -251,8 +264,8 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
         </div>
         <div className="flex flex-wrap gap-2">
           {result.verdict !== "legitimate" && (
-            <Button as={Link} to="/report" variant="danger-outline" size="sm" leftIcon={<IconFlag className="h-4 w-4" />}>
-              Report this
+            <Button as={Link} to={reportTo} state={reportState} variant="danger-outline" size="sm" leftIcon={<IconFlag className="h-4 w-4" />}>
+              Report this message
             </Button>
           )}
           <Button variant="outline" size="sm" leftIcon={<IconBookmark className="h-4 w-4" />}>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import { submitReport, REPORT_CATEGORIES, REPORT_LANGUAGES, ApiError } from "../../lib/api.js";
 import { addMyReport } from "../../lib/myReports.js";
@@ -13,7 +13,9 @@ export default function AppReportNew() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [message, setMessage] = useState("");
+  // Report this message on a result opens this page with the checked message already in the box.
+  const prefill = useLocation().state?.message;
+  const [message, setMessage] = useState(typeof prefill === "string" ? prefill.slice(0, MAX) : "");
   const [category, setCategory] = useState("");
   const [language, setLanguage] = useState("");
   const [busy, setBusy] = useState(false);
