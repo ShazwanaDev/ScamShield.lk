@@ -76,6 +76,13 @@ class ResultCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           CellMeter(value: result.confidence * 100, max: 100, cells: 24, color: tone, semanticsLabel: 'Model confidence'),
+          const SizedBox(height: 8),
+          // Usability testing: two of ten participants read Confidence as how dangerous a message is.
+          const Text(
+            'Confidence shows how sure ScamShield is about this result. It is not a measure of how dangerous '
+            'the message is, and the result can still be wrong.',
+            style: TextStyle(fontSize: 12, height: 1.4, color: AppColors.onSurfaceMuted),
+          ),
           if (result.isOffline) ...[
             const SizedBox(height: 10),
             const Row(

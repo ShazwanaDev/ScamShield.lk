@@ -147,6 +147,12 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
             thresholdLabel="Floor"
             accent={v.accent}
           />
+          {/* Usability testing: two of ten participants read Confidence as how dangerous a message is. */}
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            Confidence shows how sure ScamShield is about this result. It is not a measure of how dangerous the message
+            is, and the result can still be wrong.
+          </p>
+
           {/* Usability testing: reporting and the community alerts were the hardest things to find. */}
           <div className="mt-5 flex flex-wrap gap-2">
             {result.verdict !== "legitimate" && (
