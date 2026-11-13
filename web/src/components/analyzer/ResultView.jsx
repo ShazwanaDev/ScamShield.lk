@@ -11,6 +11,7 @@ import {
   IconThumbsUp,
   IconThumbsDown,
   IconFlag,
+  IconMegaphone,
   IconBookmark,
   IconArrowRight,
   IconWand,
@@ -70,10 +71,11 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
   const [showExplain, setShowExplain] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const events = useMemo(() => (result ? traceEvents(result) : []), [result]);
-  // In the user portal, reporting lives under /app.
+  // In the user portal, reporting and the community alerts live under /app.
   const inPortal = useLocation().pathname.startsWith("/app");
   if (!result) return null;
   const reportTo = inPortal ? "/app/reports/new" : "/report";
+  const alertsTo = inPortal ? "/app/alerts" : "/alerts";
   // The report form opens with this message already filled in.
   const reportState = { message: result.message };
 
@@ -145,13 +147,16 @@ export default function ResultView({ result, onFeedback, onReset, compact = fals
             thresholdLabel="Floor"
             accent={v.accent}
           />
-          {/* Usability testing: reporting was one of the hardest things to find. */}
+          {/* Usability testing: reporting and the community alerts were the hardest things to find. */}
           <div className="mt-5 flex flex-wrap gap-2">
             {result.verdict !== "legitimate" && (
               <Button as={Link} to={reportTo} state={reportState} variant="danger" size="sm" leftIcon={<IconFlag className="h-4 w-4" />}>
                 Report this message
               </Button>
             )}
+            <Button as={Link} to={alertsTo} variant="outline" size="sm" leftIcon={<IconMegaphone className="h-4 w-4" />}>
+              See community alerts
+            </Button>
           </div>
         </div>
 
