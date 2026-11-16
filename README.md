@@ -1,22 +1,31 @@
-# ScamShield LK — Sinhala/Tamil Scam SMS Detector
+# ScamShield LK: Sinhala/Tamil Scam SMS Detector
 
-Final Year Research Project — Mohamed Aslam Shazwana (E201057)
-BEng (Hons) Software Engineering — ESOFT / London Metropolitan University, Feb 2026 batch
+Final Year Research Project, Mohamed Aslam Shazwana (E201057)
+BEng (Hons) Software Engineering, ESOFT / London Metropolitan University, Feb 2026 batch
 Supervisor: Ms. Niruni Fonseka
+
+**Status: complete.** The dataset, the models, the evaluation, the Flask API, the React web app
+and the Flutter mobile app are finished and tested. A few features from the original plan were
+left out of the submitted version; section 6 lists them.
 
 ---
 
 ## 1. What this project is
 
-A machine learning system that classifies SMS messages as **Scam** or **Legitimate**,
-built specifically for Sri Lanka's multilingual, code-mixed texting reality
-(Sinhala script, Tamil script, English, and "Singlish"/"Thanglish" romanized text).
+A machine learning system that classifies SMS messages as **scam**, **spam** or **legitimate**,
+built for Sri Lanka's multilingual, code-mixed texting reality (Sinhala script, Tamil script,
+English, and "Singlish"/"Thanglish" romanized text).
 
-Core research contributions:
-1. First labelled real Sri Lankan scam SMS dataset (Sinhala/Tamil/Singlish/code-mixed).
-2. Word-level explainability (LIME + TF-IDF feature importance) so predictions aren't a black box.
-3. Comparison of a lightweight TF-IDF+LogReg/SVM baseline against mBERT for this
-   low-resource code-mixed setting.
+What the project delivers:
+1. A documented dataset: 127 Sri Lankan messages (115 verbatim, 12 reconstructed from documented
+   incidents) kept private for testing, and 3,000 AI-assisted synthetic messages for training,
+   with every row labelled by its source.
+2. A leakage-controlled comparison of a keyword baseline, TF-IDF with Logistic Regression and
+   SVM, and mBERT, tested on 113 real messages that were never used for training.
+3. Word-level explanations: each result shows the words that pushed it towards scam, checked
+   against LIME.
+4. A Flask API serving the model to a React web app and a Flutter mobile app, with community
+   scam reports and admin moderation.
 
 ## 2. Folder map
 
@@ -25,13 +34,13 @@ scamshield-lk/
 ├── ml/                     # everything research/model related
 │   ├── data/               # datasets (real + labeled synthetic augmentation)
 │   ├── src/                # pipeline scripts
-│   └── models/             # trained model artifacts land here (.pkl, .tflite)
+│   └── models/             # trained model artifacts (.pkl) and result files
 ├── backend/                # Flask REST API
 │   ├── app.py
 │   ├── routes/
 │   └── models/             # DB models (SQLAlchemy)
-├── mobile/                 # Flutter app (Check/Report/History/Stats tabs)
-├── web/                    # React web app (Classify/Report/Dashboard/Admin/About)
+├── mobile/                 # Flutter app (Home/History/Report/Dashboard tabs)
+├── web/                    # React web app (public site, user portal, admin console)
 ├── docker-compose.yml      # local Postgres + Redis
 └── README.md               # this file
 ```
@@ -135,7 +144,7 @@ flutter pub get
 flutter run --dart-define=SCAMSHIELD_API_URL=http://10.0.2.2:5000/api
 ```
 Bottom tabs: Home · History · Report · Dashboard. Falls back to a basic on-device keyword
-check (`OfflineModelService`, not the real TFLite model yet) when the API is unreachable.
+check (`OfflineModelService`) when the API is unreachable. There is no on-device model.
 Without an Android emulator, `flutter build web --dart-define=SCAMSHIELD_API_URL=http://localhost:5000/api`
 builds the same app for the browser.
 
@@ -171,7 +180,7 @@ runs the migrations, seeds the categories and loads the model from `ml/models`. 
 app (§3.6) as usual. `docker compose down` stops everything, and `docker compose down -v` also
 deletes the database.
 
-## 4. Dataset status (as of 25 Oct 2026)
+## 4. Dataset
 
 | Source | Location | Count | Use |
 |---|---|---|---|
@@ -187,25 +196,45 @@ results and limitations.
 `reconstructed` / `synthetic_augmentation`. Synthetic rows are never reported as collected data,
 and the primary models never train on real messages.
 
-## 5. Diagram fixes (done)
+## 5. Results
 
-The three diagram problems found earlier are fixed in the draw.io sources and exported to PNG:
-- Model training flowchart: steps now run Collect → Label → Labelled dataset → Preprocess onwards.
-- Community reporting flowchart: has the admin "Approved?" approve/reject branch.
-- Architecture diagram: has the Redis node next to PostgreSQL.
+Headline result on the 113 real messages (scam vs not-scam, 95% confidence intervals). The
+models were trained on synthetic data only:
 
-## 6. Deliverables checklist
+| Model | F1 | AUC-ROC |
+|---|---|---|
+| Keyword baseline | 0.16 [0.00–0.31] | 0.54 [0.49–0.59] |
+| TF-IDF + LogReg (served by the API) | 0.67 [0.57–0.77] | 0.83 [0.75–0.90] |
+| TF-IDF + SVM | 0.66 [0.55–0.76] | 0.79 [0.71–0.87] |
+| mBERT | 0.53 [0.41–0.63] | 0.56 [0.45–0.67] |
 
-- [ ] Interim report (due end of July) — use `Interim_Report_Template.docx`
-- [ ] Grow real dataset toward 500–1000 messages
-- [x] Fix the 3 known diagram issues above
-- [x] Train + evaluate TF-IDF/LogReg/SVM baseline (results in `ml/data/DATASET_README.md`, "Latest results")
-- [x] Fine-tune mBERT on Colab, compare metrics (results in `ml/data/DATASET_README.md`)
-- [ ] LIME explainability demo
-- [ ] Flutter + React + Flask integrated demo
-- [ ] Deploy to Railway for the live demo period
+mBERT scored highest on the synthetic test split but did not beat TF-IDF on real messages. Full
+results, including precision, recall and the other experiments, are in
+`ml/data/DATASET_README.md` ("Latest results").
 
-## 7. Hosting
+## 6. Project status
 
-Use **Railway** (not Supabase) for the demo/submission period — avoids free-tier
-inactivity pausing mid-demo, and matches the architecture docs already written.
+Completed:
+- [x] Interim report
+- [x] Real dataset collected and documented, plus the supervisor-approved synthetic set
+- [x] Keyword baseline, TF-IDF + LogReg/SVM trained and evaluated
+- [x] mBERT fine-tuned on Colab and compared
+- [x] Word-level explanations in the apps, with the LIME check
+- [x] Flask API, React web app and Flutter mobile app integrated end to end
+- [x] Community reporting with admin moderation
+- [x] Automated tests, and the whole system running in Docker
+- [x] Architecture, flowchart and data diagrams brought in line with the code
+- [x] Final report
+
+Left out of the submitted version:
+- Cloud hosting. The system runs locally with Docker Compose (section 3.9).
+- An on-device model. The mobile app uses a keyword check when offline.
+- Growing the real dataset to 500–1,000 messages. 127 were gathered, and they are used for
+  testing only.
+- Real user accounts. Sign-in in the user portal and the mobile app is a front-end mock. Admin
+  sign-in is checked by the backend.
+
+## 7. Running the submitted version
+
+The submitted version runs locally: start the backend with Docker Compose (section 3.9), then
+the web app (section 3.6) and the mobile app (section 3.7). It is not hosted online.
